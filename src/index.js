@@ -1,65 +1,29 @@
-
-class Hero {
-  setOrigin(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-  width = 20;
-  height = 20;
-  vx = 0;
-  vy = 0;
-}
+import Hero from './hero';
+import { Keyboard } from './keyboard';
 
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
-const hero = new Hero();
+fillScreen(canvas);
+window.addEventListener('resize', () => fillScreen(canvas));
 
-const x = canvas.width / 2 - hero.width / 2;
-const y = canvas.height - hero.height;
+function fillScreen(canvas) {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
 
-hero.setOrigin(x, y);
+const hero = new Hero(canvas);
+const keyboard = new Keyboard(window, hero);
 
-const V = 3;
 const GRAVITY = 0.7;
-
-document.addEventListener('keydown', e => {
-  switch (e.code) {
-    case 'ArrowLeft':
-      hero.vx = V * -1;
-      break;
-    case 'ArrowRight':
-      hero.vx = V;
-      break;
-    case 'Space':
-      console.log('jump');
-      hero.vy = -V * 3;
-      break;
-    default:
-      console.log(`e.code:`, e.code);
-  }
-});
-document.addEventListener('keyup', (e) => {
-  switch (e.code) {
-    case 'ArrowLeft':
-    case 'ArrowRight':
-      hero.vx = 0;
-      break;
-    case 'Space':
-      hero.vy = 0;
-      break;
-    default:
-      console.log(`e.code:`, e.code);
-  }
-});
 
 function drawHero(deltaTime) {
   hero.x += hero.vx;
   hero.y += hero.vy;
   hero.vy += GRAVITY;
-  if (hero.y + hero.height > canvas.height) {
-    hero.y = canvas.height - hero.height;
-  }
+
+  checkWallCollision(hero, canvas);
+
   ctx.fillStyle = 'white';
   ctx.fillRect(hero.x, hero.y, hero.width, hero.height);
 }
@@ -71,5 +35,18 @@ function update(deltaTime) {
   requestAnimationFrame(update);
 }
 
-update();
+function checkWallCollision(hero, canvas) {
+  if (hero.y + hero.height > canvas.height) {
+    hero.y = canvas.height - hero.height;
+  }
+  if (hero.x < 0) {
+    hero.x = 0;
+    hero.vx *= -1;
+  }
+  if (hero.x > canvas.width) {
+    hero.x = canvas.width;
+    hero.vx *= -1;
+  }
+}
 
+update();
