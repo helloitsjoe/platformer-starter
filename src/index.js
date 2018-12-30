@@ -1,5 +1,6 @@
 import Hero from './hero';
 import { Keyboard } from './keyboard';
+import { Socket } from './socket';
 
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
@@ -13,7 +14,8 @@ function fillScreen(canvas) {
 }
 
 const hero = new Hero(canvas);
-const keyboard = new Keyboard(window, hero);
+// const input = new Keyboard(window, hero);
+const input = new Socket(window, hero);
 
 const GRAVITY = 0.7;
 
