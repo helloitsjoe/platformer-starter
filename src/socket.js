@@ -8,7 +8,6 @@ export class Socket {
     this.socket = io();
     this.socket.on('connected', () => console.log('connected!'));
     this.socket.on('relay-tap', this.handleTap.bind(this));
-    // document.addEventListener('click', () => console.log(`click`));
   }
 
   handleTap(e) {

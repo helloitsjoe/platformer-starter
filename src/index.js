@@ -14,8 +14,8 @@ function fillScreen(canvas) {
 }
 
 const hero = new Hero(canvas);
-// const input = new Keyboard(window, hero);
-const input = new Socket(window, hero);
+const keyboardInput = new Keyboard(window, hero);
+const socketInput = new Socket(window, hero);
 
 const GRAVITY = 0.7;
 

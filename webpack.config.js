@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   module: {
     rules: [
@@ -9,5 +11,9 @@ module.exports = {
         },
       },
     ],
+  },
+  output: {
+    path: path.resolve(__dirname, 'public'),
+    filename: 'index.js',
   },
 };
