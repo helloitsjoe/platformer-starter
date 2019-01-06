@@ -1,7 +1,6 @@
 const V = 5;
 
 export class Keyboard {
-
   constructor(window, hero) {
     this.hero = hero;
     window.addEventListener('keydown', this.handleKeydown.bind(this));
