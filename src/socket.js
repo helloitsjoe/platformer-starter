@@ -1,17 +1,16 @@
 import io from 'socket.io-client';
 
-const V = 5;
-
-export class Socket {
-  constructor(window, hero) {
+export default class Socket {
+  constructor(hero, window, port) {
+    const url = port && `http://localhost:${port}`;
     this.hero = hero;
-    this.socket = io();
+    this.socket = io(url);
     this.socket.on('connected', () => console.log('connected!'));
     this.socket.on('relay-tap', this.handleTap.bind(this));
   }
 
   handleTap(e) {
     console.log(`clicked! e:`, e);
-    this.hero.vy = -V * 3;
+    this.hero.jump();
   }
 }
