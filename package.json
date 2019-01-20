@@ -4,9 +4,10 @@
   "description": "HTML5 Canvas Platformer Starter",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "jest --watch --verbose --coverage",
-    "start": "webpack --watch --mode development",
-    "server": "nodemon server"
+    "server": "nodemon server",
+    "start": "npm run server",
+    "watch": "webpack --watch --mode development",
+    "test": "jest --watch --verbose --coverage"
   },
   "repository": {
     "type": "git",

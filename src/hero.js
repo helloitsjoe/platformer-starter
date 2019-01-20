@@ -6,8 +6,10 @@ export default class Hero {
     this.width = 20;
     this.height = 20;
     this.canvas = canvas || document.createElement('canvas');
-    this.x = x || this.canvas.width / 2 - this.width / 2;
-    this.y = y || this.canvas.height - this.height;
+    this.offsetX = this.width / 2;
+    this.offsetY = this.height;
+    this.x = x || this.canvas.width / 2;
+    this.y = y || this.canvas.height;
     this.vx = 0;
     this.vy = 0;
   }
@@ -38,19 +40,24 @@ export default class Hero {
 
   draw(ctx) {
     ctx.fillStyle = 'white';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.fillRect(
+      this.x - this.offsetX,
+      this.y - this.offsetY,
+      this.width,
+      this.height
+    );
   }
 
   checkWallCollision() {
-    if (this.y + this.height > this.canvas.height) {
-      this.y = this.canvas.height - this.height;
+    if (this.y > this.canvas.height) {
+      this.y = this.canvas.height;
     }
     if (this.x < 0) {
       this.x = 0;
       this.vx *= -1;
     }
-    if (this.x > this.canvas.width - this.height) {
-      this.x = this.canvas.width - this.height;
+    if (this.x > this.canvas.width) {
+      this.x = this.canvas.width;
       this.vx *= -1;
     }
   }

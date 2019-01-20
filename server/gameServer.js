@@ -33,7 +33,7 @@ const createServer = (port = 3001) => {
   });
 
   http.listen(port, () => {
-    console.log(`listening on port ${port}`);
+    console.log(`listening on http://localhost:${port}`);
   });
 
   ipLog(port);

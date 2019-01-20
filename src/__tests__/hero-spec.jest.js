@@ -7,10 +7,17 @@ beforeEach(() => {
   hero = new Hero({ canvas });
 });
 
+it('draws hero', () => {
+  const mockCtx = { fillStyle: '', fillRect: jest.fn() };
+  hero.draw(mockCtx);
+  expect(mockCtx.fillStyle).toBe('white');
+  expect(mockCtx.fillRect).toBeCalledTimes(1);
+});
+
 describe('movement', () => {
   it('puts hero at bottom middle of screen', () => {
-    expect(hero.y).toBe(canvas.height - hero.height);
-    expect(hero.x).toBe(canvas.width / 2 - hero.width / 2);
+    expect(hero.y).toBe(canvas.height);
+    expect(hero.x).toBe(canvas.width / 2);
   });
 
   it('hero has no initial velocity', () => {
@@ -70,7 +77,7 @@ describe('collisions', () => {
 
   it('right wall: should not move right', () => {
     // Position at right wall
-    const initialX = canvas.width - hero.width;
+    const initialX = canvas.width;
     hero.x = initialX;
     hero.moveRight();
     hero.update();
@@ -80,7 +87,7 @@ describe('collisions', () => {
 
   it('floor: should not move below', () => {
     // Position hero at bottom of screen
-    const initialY = canvas.height - hero.height;
+    const initialY = canvas.height;
     hero.y = initialY;
     hero.update();
     expect(hero.y).not.toBeGreaterThan(initialY);
