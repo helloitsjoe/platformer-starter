@@ -29,6 +29,13 @@ describe('keyboard', () => {
     eventMap[event]({ code: key });
     expect(hero[method]).toBeCalledTimes(1);
   });
+
+  it('unhandled methods do not throw', () => {
+    const hero = {};
+    const keyboard = new Keyboard(hero, window);
+    eventMap.keydown({ code: 'Poo' });
+    eventMap.keyup({ code: 'Poo' });
+  });
 });
 
 describe.skip('socket', () => {

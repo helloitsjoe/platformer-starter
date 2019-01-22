@@ -3,32 +3,34 @@ export default class Keyboard {
     this.hero = hero;
     window.addEventListener('keydown', this.handleKeydown.bind(this));
     window.addEventListener('keyup', this.handleKeyup.bind(this));
+
+    this.keyDownMap = {
+      ArrowLeft: () => this.hero.moveLeft(),
+      ArrowRight: () => this.hero.moveRight(),
+      Space: () => this.hero.jump(),
+    };
+
+    this.keyUpMap = {
+      ArrowLeft: () => this.hero.stopX(),
+      ArrowRight: () => this.hero.stopX(),
+    };
   }
 
   handleKeydown(e) {
-    switch (e.code) {
-      case 'ArrowLeft':
-        this.hero.moveLeft();
-        break;
-      case 'ArrowRight':
-        this.hero.moveRight();
-        break;
-      case 'Space':
-        this.hero.jump();
-        break;
-      default:
-        console.log(`e.code:`, e.code);
+    const maybeFunc = this.keyDownMap[e.code];
+    if (typeof maybeFunc === 'function') {
+      return maybeFunc();
     }
+    // istanbul ignore next
+    console.log(`No handler for`, e.code);
   }
 
   handleKeyup(e) {
-    switch (e.code) {
-      case 'ArrowLeft':
-      case 'ArrowRight':
-        this.hero.stopX();
-        break;
-      default:
-        console.log(`e.code:`, e.code);
+    const maybeFunc = this.keyUpMap[e.code];
+    if (typeof maybeFunc === 'function') {
+      return maybeFunc();
     }
+    // istanbul ignore next
+    console.log(`No handler for`, e.code);
   }
 }

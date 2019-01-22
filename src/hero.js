@@ -1,11 +1,11 @@
 const GRAVITY = 0.7;
-const V = 5;
+const VELOCITY = 5;
 
 export default class Hero {
   constructor({ canvas, x, y } = {}) {
+    this.canvas = canvas || document.createElement('canvas');
     this.width = 20;
     this.height = 20;
-    this.canvas = canvas || document.createElement('canvas');
     this.offsetX = this.width / 2;
     this.offsetY = this.height;
     this.x = x || this.canvas.width / 2;
@@ -15,15 +15,15 @@ export default class Hero {
   }
 
   jump() {
-    this.vy = -V * 3;
+    this.vy = -VELOCITY * 3;
   }
 
   moveLeft() {
-    this.vx = -V;
+    this.vx = -VELOCITY;
   }
 
   moveRight() {
-    this.vx = V;
+    this.vx = VELOCITY;
   }
 
   stopX() {

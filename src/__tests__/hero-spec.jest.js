@@ -14,6 +14,11 @@ it('draws hero', () => {
   expect(mockCtx.fillRect).toBeCalledTimes(1);
 });
 
+it('creates canvas if none provided', () => {
+  const hero2 = new Hero();
+  expect(hero2.canvas).toBeInstanceOf(HTMLCanvasElement);
+});
+
 describe('movement', () => {
   it('puts hero at bottom middle of screen', () => {
     expect(hero.y).toBe(canvas.height);
