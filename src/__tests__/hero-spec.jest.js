@@ -1,9 +1,13 @@
 import Hero from '../hero';
+import Platform from '../platform';
 
 let hero;
-let canvas = document.createElement('canvas');
+let canvas;
 
 beforeEach(() => {
+  canvas = document.createElement('canvas');
+  canvas.height = 800;
+  canvas.width = 1000;
   hero = new Hero({ canvas });
 });
 
@@ -96,5 +100,67 @@ describe('collisions', () => {
     hero.y = initialY;
     hero.update();
     expect(hero.y).not.toBeGreaterThan(initialY);
+  });
+
+  describe('platform', () => {
+    let plat;
+    let platforms;
+
+    beforeEach(() => {
+      plat = new Platform({
+        x: 600,
+        y: 600,
+        width: 100,
+        height: 30,
+      });
+      platforms = [plat];
+    });
+
+    it('hero rests on top', () => {
+      hero.x = plat.x + 50;
+      hero.y = plat.y - 2;
+
+      hero.update(platforms);
+      hero.update(platforms);
+
+      expect(hero.y).toBe(plat.y);
+      hero.moveRight();
+      expect(hero.y).toBe(plat.y);
+    });
+
+    it('hero falls off sides', () => {
+      hero.x = plat.x - hero.offsetX - 2;
+      hero.y = plat.y - 2;
+
+      hero.update(platforms);
+      hero.update(platforms);
+
+      expect(hero.y).toBeGreaterThan(plat.y);
+
+      hero.x = plat.x + plat.width + hero.offsetX + 2;
+      hero.y = plat.y - 2;
+
+      hero.update(platforms);
+      hero.update(platforms);
+
+      expect(hero.y).toBeGreaterThan(plat.y);
+    });
+
+    it('hero can walk underneath platform', () => {
+      hero.x = plat.x - hero.offsetX - 2;
+      hero.y = canvas.height;
+
+      hero.moveRight();
+      hero.update(platforms);
+      hero.update(platforms);
+
+      expect(hero.y).toBe(canvas.height);
+    });
+
+    xit('hero bumps into left side', () => {});
+
+    xit('hero bumps into right side', () => {});
+
+    xit('hero bumps into bottom', () => {});
   });
 });

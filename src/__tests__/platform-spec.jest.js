@@ -1,4 +1,4 @@
-import Platform, { makePlatform } from '../platform';
+import Platform, { makeRandomPlatform } from '../platform';
 
 describe('platform', () => {
   it('draws platform', () => {
@@ -18,18 +18,18 @@ describe('platform', () => {
     expect(plat.width).toBe(options.width);
   });
 
-  it('makePlatform creates platform on screen', () => {
+  it('makeRandomPlatform creates platform on screen', () => {
     const options = { maxX: 200, maxY: 200, width: 20, height: 10 };
-    const plat = makePlatform(options)();
+    const plat = makeRandomPlatform(options)();
     expect(plat.x).toBeGreaterThanOrEqual(0);
     expect(plat.y).toBeGreaterThanOrEqual(0);
     expect(plat.x + plat.width).toBeLessThanOrEqual(options.maxX);
     expect(plat.y + plat.height).toBeLessThanOrEqual(options.maxY);
   });
 
-  it('makePlatform default width/height if none provided', () => {
+  it('makeRandomPlatform default width/height if none provided', () => {
     const options = { maxX: 1000, maxY: 800 };
-    const plat = makePlatform(options)();
+    const plat = makeRandomPlatform(options)();
     expect(plat.x).toBeGreaterThanOrEqual(0);
     expect(plat.y).toBeGreaterThanOrEqual(0);
     expect(plat.x + plat.width).toBeLessThanOrEqual(options.maxX);

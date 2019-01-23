@@ -12,7 +12,7 @@ export default class Platform {
   }
 }
 
-export const makePlatform = ({
+export const makeRandomPlatform = ({
   maxX,
   maxY,
   width = 200,

@@ -30,12 +30,12 @@ export default class Hero {
     this.vx = 0;
   }
 
-  update(ctx) {
+  update(platforms) {
     this.vy += GRAVITY;
     this.x += this.vx;
     this.y += this.vy;
 
-    this.checkWallCollision();
+    this._checkCollisions(platforms);
   }
 
   draw(ctx) {
@@ -48,9 +48,33 @@ export default class Hero {
     );
   }
 
-  checkWallCollision() {
+  _checkCollisions(platforms) {
+    this._checkPlatformCollisions(platforms);
+    this._checkWallCollisions();
+  }
+
+  _checkPlatformCollisions(platforms = []) {
+    platforms.forEach(platform => {
+      // TODO: Only check leading edge
+      // TODO: Refactor to use top/bottom/leftSide/rightSide?
+      const isWithinPlatformX =
+        this.x + this.offsetX > platform.x &&
+        this.x - this.offsetX < platform.x + platform.width;
+      const isWithinPlatformY =
+        this.y >= platform.y &&
+        this.y - this.offsetY < platform.y + platform.height;
+
+      if (isWithinPlatformX && isWithinPlatformY) {
+        this.y = platform.y;
+        this.vy = 0;
+      }
+    });
+  }
+
+  _checkWallCollisions() {
     if (this.y > this.canvas.height) {
       this.y = this.canvas.height;
+      this.vy = 0;
     }
     if (this.x < 0) {
       this.x = 0;

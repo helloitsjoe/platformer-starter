@@ -1,5 +1,5 @@
 import Hero from './hero';
-import { makePlatform } from './platform';
+import { makeRandomPlatform } from './platform';
 import Keyboard from './keyboard';
 import Socket from './socket';
 
@@ -17,7 +17,7 @@ function fillScreen(canvas) {
 const hero = new Hero({ canvas });
 const platforms = new Array(5)
   .fill(null)
-  .map(makePlatform({ maxX: canvas.width, maxY: canvas.height }));
+  .map(makeRandomPlatform({ maxX: canvas.width, maxY: canvas.height }));
 const keyboardInput = new Keyboard(hero, window);
 const socketInput = new Socket(hero, window);
 
@@ -25,7 +25,7 @@ function update(deltaTime) {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  hero.update();
+  hero.update(platforms);
   hero.draw(ctx);
   platforms.forEach(platform => platform.draw(ctx));
 
