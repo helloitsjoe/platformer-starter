@@ -161,6 +161,16 @@ describe('collisions', () => {
 
     xit('hero bumps into right side', () => {});
 
-    xit('hero bumps into bottom', () => {});
+    it('hero bumps into bottom', () => {
+      hero.x = plat.x;
+      hero.y = canvas.height;
+      plat.y = hero.y - hero.height - plat.height - 10;
+
+      hero.jump();
+      hero.update(platforms);
+      hero.update(platforms);
+
+      expect(hero.y).toBeGreaterThan(plat.y + plat.height + hero.offsetY);
+    });
   });
 });

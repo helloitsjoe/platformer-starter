@@ -65,7 +65,13 @@ export default class Hero {
         this.y - this.offsetY < platform.y + platform.height;
 
       if (isWithinPlatformX && isWithinPlatformY) {
-        this.y = platform.y;
+        // If hero collides with the bottom of a platform while
+        // jumping, move top of hero to below bottom of platform
+        if (this.vy < 0) {
+          this.y = platform.y + platform.height + this.offsetY;
+        } else {
+          this.y = platform.y;
+        }
         this.vy = 0;
       }
     });

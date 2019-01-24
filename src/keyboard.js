@@ -13,6 +13,7 @@ export default class Keyboard {
     this.keyUpMap = {
       ArrowLeft: () => this.hero.stopX(),
       ArrowRight: () => this.hero.stopX(),
+      // Space: () => {}, // TODO: Cancel jump?
     };
   }
 
