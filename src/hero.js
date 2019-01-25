@@ -134,11 +134,11 @@ export default class Hero {
     }
     if (this.x < 0) {
       this.x = 0;
-      this.vx *= -1;
+      this.stopX();
     }
     if (this.x > this.canvas.width) {
       this.x = this.canvas.width;
-      this.vx *= -1;
+      this.stopX();
     }
   }
 }
