@@ -6,12 +6,14 @@ export default class Hero {
     this.canvas = canvas || document.createElement('canvas');
     this.width = 20;
     this.height = 20;
-    this.offsetX = this.width / 2;
-    this.offsetY = this.height;
+    this._offsetX = this.width / 2;
+    this._offsetY = this.height;
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
     this.vx = 0;
     this.vy = 0;
+    this._bounds = {};
+    this._updateBounds();
   }
 
   jump() {
@@ -30,6 +32,12 @@ export default class Hero {
     this.vx = 0;
   }
 
+  move({ x = this.x, y = this.y }) {
+    this.x = x;
+    this.y = y;
+    this._updateBounds();
+  }
+
   update(platforms) {
     this.vy += GRAVITY;
     this.x += this.vx;
@@ -41,36 +49,78 @@ export default class Hero {
   draw(ctx) {
     ctx.fillStyle = 'white';
     ctx.fillRect(
-      this.x - this.offsetX,
-      this.y - this.offsetY,
+      this.x - this._offsetX,
+      this.y - this._offsetY,
       this.width,
       this.height
     );
   }
 
+  getBounds() {
+    throw new Error('Use individual bounds getters instead.');
+    // return this._bounds;
+  }
+
+  getTop() {
+    return this._bounds.top;
+  }
+
+  getBottom() {
+    return this._bounds.bottom;
+  }
+
+  getLeft() {
+    return this._bounds.left;
+  }
+
+  getRight() {
+    return this._bounds.right;
+  }
+
+  _updateBounds() {
+    this._bounds = {
+      bottom: this.y,
+      top: this.y - this.height,
+      left: this.x - this._offsetX,
+      right: this.x + this._offsetX,
+    };
+  }
+
   _checkCollisions(platforms) {
+    // update bounds before and after because
+    // collisions can move position
+    this._updateBounds();
     this._checkPlatformCollisions(platforms);
     this._checkWallCollisions();
+    this._updateBounds();
   }
 
   _checkPlatformCollisions(platforms = []) {
     platforms.forEach(platform => {
       // TODO: Only check leading edge
-      // TODO: Refactor to use top/bottom/leftSide/rightSide?
       const isWithinPlatformX =
-        this.x + this.offsetX > platform.x &&
-        this.x - this.offsetX < platform.x + platform.width;
+        this.getRight() > platform.getLeft() &&
+        this.getLeft() < platform.getRight();
       const isWithinPlatformY =
-        this.y >= platform.y &&
-        this.y - this.offsetY < platform.y + platform.height;
+        this.getBottom() >= platform.getTop() &&
+        this.getTop() < platform.getBottom();
 
       if (isWithinPlatformX && isWithinPlatformY) {
+        // if (this.vx >= 0) {
+        //   if (this.getRight() < platform.getLeft() + VELOCITY + 1) {
+        //     this.x = platform.getLeft() - this._offsetX;
+        //   } else if (this.getLeft() > platform.getRight() - VELOCITY - 1) {
+        //     this.x = platform.getRight() + this._offsetX;
+        //   }
+        //   this.vx = 0;
+        // }
+
         // If hero collides with the bottom of a platform while
         // jumping, move top of hero to below bottom of platform
         if (this.vy < 0) {
-          this.y = platform.y + platform.height + this.offsetY;
+          this.y = platform.getBottom() + this._offsetY;
         } else {
-          this.y = platform.y;
+          this.y = platform.getTop();
         }
         this.vy = 0;
       }

@@ -1,5 +1,5 @@
 import Hero from './hero';
-import { makeRandomPlatform } from './platform';
+import Platform, { makeRandomPlatform } from './platform';
 import Keyboard from './keyboard';
 import Socket from './socket';
 
@@ -18,6 +18,15 @@ const hero = new Hero({ canvas });
 const platforms = new Array(5)
   .fill(null)
   .map(makeRandomPlatform({ maxX: canvas.width, maxY: canvas.height }));
+// create platform for testing left/right collisions
+platforms.push(
+  new Platform({
+    x: canvas.width - 300,
+    y: canvas.height - 40,
+    width: 200,
+    height: 30,
+  })
+);
 const keyboardInput = new Keyboard(hero, window);
 const socketInput = new Socket(hero, window);
 
