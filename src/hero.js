@@ -12,8 +12,6 @@ export default class Hero {
     this.y = y || this.canvas.height;
     this.vx = 0;
     this.vy = 0;
-    this._bounds = {};
-    this._updateBounds();
   }
 
   jump() {
@@ -32,10 +30,9 @@ export default class Hero {
     this.vx = 0;
   }
 
-  move({ x = this.x, y = this.y }) {
+  place({ x = this.x, y = this.y } = {}) {
     this.x = x;
     this.y = y;
-    this._updateBounds();
   }
 
   update(platforms) {
@@ -56,43 +53,25 @@ export default class Hero {
     );
   }
 
-  getBounds() {
-    throw new Error('Use individual bounds getters instead.');
-    // return this._bounds;
-  }
-
   getTop() {
-    return this._bounds.top;
+    return this.y - this._offsetY;
   }
 
   getBottom() {
-    return this._bounds.bottom;
+    return this.y;
   }
 
   getLeft() {
-    return this._bounds.left;
+    return this.x - this._offsetX;
   }
 
   getRight() {
-    return this._bounds.right;
-  }
-
-  _updateBounds() {
-    this._bounds = {
-      bottom: this.y,
-      top: this.y - this.height,
-      left: this.x - this._offsetX,
-      right: this.x + this._offsetX,
-    };
+    return this.x + this._offsetX;
   }
 
   _checkCollisions(platforms) {
-    // update bounds before and after because
-    // collisions can move position
-    this._updateBounds();
     this._checkPlatformCollisions(platforms);
     this._checkWallCollisions();
-    this._updateBounds();
   }
 
   _checkPlatformCollisions(platforms = []) {

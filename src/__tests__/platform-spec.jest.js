@@ -18,6 +18,28 @@ describe('platform', () => {
     expect(plat.width).toBe(options.width);
   });
 
+  it('platform.place({ x, y }) teleports platform to x, y', () => {
+    const options = { x: 100, y: 100, height: 50, width: 200 };
+    const plat = new Platform(options);
+    plat.place({ x: 42, y: 256 });
+    expect(plat.x).toBe(42);
+    expect(plat.y).toBe(256);
+  });
+
+  it('platform.place() uses previous value if x or y is undefined', () => {
+    const options = { x: 100, y: 100, height: 50, width: 200 };
+    const plat = new Platform(options);
+    plat.place({ x: 42 });
+    expect(plat.x).toBe(42);
+    expect(plat.y).toBe(100);
+    plat.place({ y: 128 });
+    expect(plat.x).toBe(42);
+    expect(plat.y).toBe(128);
+    plat.place();
+    expect(plat.x).toBe(42);
+    expect(plat.y).toBe(128);
+  });
+
   it('makeRandomPlatform creates platform on screen', () => {
     const options = { maxX: 200, maxY: 200, width: 20, height: 10 };
     const plat = makeRandomPlatform(options)();

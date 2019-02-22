@@ -22,8 +22,8 @@ const createServer = (port = 3001) => {
   io.on('connection', socket => {
     console.log(`A new user connected!`);
     socket.emit('connected');
-    socket.on('tap', () => {
-      console.log(`tapped`);
+    socket.on('tap', ({ x, y }) => {
+      console.log(`tapped: ${x}, ${y}`);
       socket.broadcast.emit('relay-tap');
     });
 

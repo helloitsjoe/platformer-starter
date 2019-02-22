@@ -4,8 +4,6 @@ export default class Platform {
     this.y = y;
     this.width = width;
     this.height = height;
-    this._bounds = {};
-    this._updateBounds();
   }
 
   draw(ctx) {
@@ -13,39 +11,25 @@ export default class Platform {
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 
-  getBounds() {
-    throw new Error('Use individual bounds getters instead.');
-  }
-
   getTop() {
-    return this._bounds.top;
+    return this.y;
   }
 
   getBottom() {
-    return this._bounds.bottom;
+    return this.y + this.height;
   }
 
   getLeft() {
-    return this._bounds.left;
+    return this.x;
   }
 
   getRight() {
-    return this._bounds.right;
+    return this.x + this.width;
   }
 
-  move({ x = this.x, y = this.y }) {
+  place({ x = this.x, y = this.y } = {}) {
     this.x = x;
     this.y = y;
-    this._updateBounds();
-  }
-
-  _updateBounds() {
-    this._bounds = {
-      top: this.y,
-      bottom: this.y + this.height,
-      left: this.x,
-      right: this.x + this.width,
-    };
   }
 }
 

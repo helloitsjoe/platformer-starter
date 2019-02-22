@@ -30,6 +30,25 @@ describe('movement', () => {
     expect(hero.x).toBe(canvas.width / 2);
   });
 
+  it('hero.place({ x, y }) teleports to x and y', () => {
+    hero.place({ x: 42, y: 256 });
+    expect(hero.x).toBe(42);
+    expect(hero.y).toBe(256);
+  });
+
+  it('hero.place() uses previous value if x or y is undefined', () => {
+    hero.place({ x: 42, y: 256 });
+    hero.place({ x: 55 });
+    expect(hero.x).toBe(55);
+    expect(hero.y).toBe(256);
+    hero.place({ y: 128 });
+    expect(hero.x).toBe(55);
+    expect(hero.y).toBe(128);
+    hero.place();
+    expect(hero.x).toBe(55);
+    expect(hero.y).toBe(128);
+  });
+
   it('hero has no initial velocity', () => {
     expect(hero.vx).toBe(0);
     expect(hero.vy).toBe(0);
@@ -115,8 +134,10 @@ describe('collisions', () => {
     });
 
     it('hero rests on top', () => {
-      hero.x = plat.getLeft() + 50;
-      hero.y = plat.getTop() - 2;
+      hero.place({
+        x: plat.getLeft() + 50,
+        y: plat.getTop() - 2,
+      });
 
       hero.update(platforms);
       hero.update(platforms);
@@ -127,26 +148,38 @@ describe('collisions', () => {
     });
 
     it('hero falls off sides', () => {
-      hero.x = plat.x - hero.offsetX - 2;
-      hero.y = plat.y - 2;
+      // Place hero on left edge of platform
+      hero.place({
+        x: plat.getLeft() - hero._offsetX + 2,
+        y: plat.getTop(),
+      });
+
+      hero.moveLeft();
 
       hero.update(platforms);
       hero.update(platforms);
 
-      expect(hero.y).toBeGreaterThan(plat.y);
+      expect(hero.getBottom()).toBeGreaterThan(plat.getTop());
 
-      hero.x = plat.x + plat.width + hero.offsetX + 2;
-      hero.y = plat.y - 2;
+      // Place hero on right edge of platform
+      hero.place({
+        x: plat.getRight() + hero._offsetX + 2,
+        y: plat.getTop(),
+      });
+
+      hero.moveRight();
 
       hero.update(platforms);
       hero.update(platforms);
 
-      expect(hero.y).toBeGreaterThan(plat.y);
+      expect(hero.getBottom()).toBeGreaterThan(plat.getTop());
     });
 
     it('hero can walk underneath platform', () => {
-      hero.x = plat.x - hero.offsetX - 2;
-      hero.y = canvas.height;
+      hero.place({
+        x: plat.getLeft() - hero._offsetX - 2,
+        y: canvas.height,
+      });
 
       hero.moveRight();
       hero.update(platforms);
@@ -158,7 +191,7 @@ describe('collisions', () => {
     xit('hero bumps into left side', () => {
       // Platform is sitting on the ground
       plat.move({ y: canvas.height - plat.height });
-      hero.move({
+      hero.place({
         x: plat.getLeft() - hero._offsetX - 2,
         y: canvas.height,
       });
@@ -173,7 +206,7 @@ describe('collisions', () => {
     xit('hero bumps into right side', () => {
       // Platform is sitting on the ground
       plat.move({ y: canvas.height - plat.height });
-      hero.move({
+      hero.place({
         x: plat.getRight() + hero._offsetX + 2,
         y: canvas.height,
       });
@@ -186,9 +219,12 @@ describe('collisions', () => {
     });
 
     it('hero bumps into bottom', () => {
-      hero.x = plat.x;
-      hero.y = canvas.height;
-      plat.y = hero.y - hero.height - plat.height - 10;
+      hero.place({
+        x: plat.getLeft(),
+        y: canvas.height,
+      });
+      // Place bottom of platform 10px above hero
+      plat.y = hero.getTop() - plat.height - 10;
 
       hero.jump();
       hero.update(platforms);
