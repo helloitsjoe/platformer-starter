@@ -22,9 +22,9 @@ const platforms = new Array(5)
 platforms.push(
   new Platform({
     x: canvas.width - 300,
-    y: canvas.height - 40,
+    y: canvas.height - 100,
     width: 200,
-    height: 30,
+    height: 100,
   })
 );
 const keyboardInput = new Keyboard(hero, window);

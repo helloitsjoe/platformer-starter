@@ -188,9 +188,9 @@ describe('collisions', () => {
       expect(hero.y).toBe(canvas.height);
     });
 
-    xit('hero bumps into left side', () => {
+    it('hero bumps into left side', () => {
       // Platform is sitting on the ground
-      plat.move({ y: canvas.height - plat.height });
+      plat.place({ y: canvas.height - plat.height });
       hero.place({
         x: plat.getLeft() - hero._offsetX - 2,
         y: canvas.height,
@@ -203,9 +203,9 @@ describe('collisions', () => {
       expect(hero.getBottom()).toBe(canvas.height);
     });
 
-    xit('hero bumps into right side', () => {
+    it('hero bumps into right side', () => {
       // Platform is sitting on the ground
-      plat.move({ y: canvas.height - plat.height });
+      plat.place({ y: canvas.height - plat.height });
       hero.place({
         x: plat.getRight() + hero._offsetX + 2,
         y: canvas.height,

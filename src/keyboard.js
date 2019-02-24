@@ -18,20 +18,12 @@ export default class Keyboard {
   }
 
   handleKeydown(e) {
-    const maybeFunc = this.keyDownMap[e.code];
-    if (typeof maybeFunc === 'function') {
-      return maybeFunc();
-    }
-    // istanbul ignore next
-    console.log(`No handler for`, e.code);
+    const func = this.keyDownMap[e.code];
+    return func ? func() : console.log(`No keydown handler for`, e.code);
   }
 
   handleKeyup(e) {
-    const maybeFunc = this.keyUpMap[e.code];
-    if (typeof maybeFunc === 'function') {
-      return maybeFunc();
-    }
-    // istanbul ignore next
-    console.log(`No handler for`, e.code);
+    const func = this.keyUpMap[e.code];
+    return func ? func() : console.log(`No keyup handler for`, e.code);
   }
 }
