@@ -54,13 +54,6 @@ describe('movement', () => {
     expect(hero.vy).toBe(0);
   });
 
-  it('hero jumps', () => {
-    const initialY = hero.y;
-    hero.jump();
-    hero.update();
-    expect(hero.y).toBeLessThan(initialY);
-  });
-
   it('hero moves left', () => {
     const initialX = hero.x;
     hero.moveLeft();
@@ -231,6 +224,32 @@ describe('collisions', () => {
       hero.update(platforms);
 
       expect(hero.getTop()).toBeGreaterThan(plat.getBottom());
+    });
+
+    it('hero can jump when on ground', () => {
+      hero.place({
+        x: plat.getLeft() + 50,
+        y: plat.getTop(),
+      });
+      hero.jump();
+      hero.update(platforms);
+
+      // vy < 0 is moving up
+      expect(hero.vy).toBeLessThan(0);
+    });
+
+    it('hero CANNOT jump when NOT on ground', () => {
+      hero.place({
+        x: plat.getLeft() + 50,
+        // move hero above top of platform
+        y: plat.getTop() + 100,
+      });
+      hero.update(platforms);
+      hero.jump();
+      hero.update(platforms);
+
+      // vy > 0 is moving down
+      expect(hero.vy).toBeGreaterThan(0);
     });
   });
 });

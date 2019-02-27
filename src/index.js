@@ -27,6 +27,15 @@ platforms.push(
     height: 100,
   })
 );
+// create ground
+platforms.push(
+  new Platform({
+    x: 0,
+    y: canvas.height - 20,
+    width: canvas.width,
+    height: 20,
+  })
+);
 const keyboardInput = new Keyboard(hero, window);
 const socketInput = new Socket(hero, window);
 

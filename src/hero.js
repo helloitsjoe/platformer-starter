@@ -2,7 +2,7 @@ const GRAVITY = 0.7;
 const VELOCITY = 5;
 
 export default class Hero {
-  constructor({ canvas, x, y } = {}) {
+  constructor({ canvas, x, y, grounded = true } = {}) {
     this.canvas = canvas || document.createElement('canvas');
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
@@ -11,13 +11,16 @@ export default class Hero {
     this.vy = 0;
     this.width = 20;
     this.height = 20;
+    this._grounded = grounded;
     this._offsetX = this.width / 2;
     this._offsetY = this.height;
     this._marginX = this.width - (VELOCITY + 1);
   }
 
   jump() {
-    this.vy = -VELOCITY * 3;
+    if (this._grounded) {
+      this.vy = -VELOCITY * 3;
+    }
   }
 
   moveLeft() {
@@ -77,6 +80,7 @@ export default class Hero {
   }
 
   _checkPlatformCollisions(platforms = []) {
+    this._grounded = false;
     platforms.forEach(platform => {
       const isWithinPlatformX =
         this.getRight() > platform.getLeft() &&
@@ -100,6 +104,7 @@ export default class Hero {
           this.vy = 0;
         } else {
           this.y = platform.getTop();
+          this._grounded = true;
           this.vy = 0;
         }
       }
