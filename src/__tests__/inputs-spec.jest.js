@@ -36,6 +36,31 @@ describe('keyboard', () => {
     eventMap.keydown({ code: 'Poo' });
     eventMap.keyup({ code: 'Poo' });
   });
+
+  it('keyup does not stop hero if the opposite key is down', () => {
+    const hero = {
+      moveRight: jest.fn(),
+      stopX: jest.fn(),
+      moveLeft: jest.fn(),
+    };
+    const keyboard = new Keyboard(hero, window);
+    expect(hero.moveRight).toBeCalledTimes(0);
+    expect(hero.moveLeft).toBeCalledTimes(0);
+    expect(hero.stopX).toBeCalledTimes(0);
+    eventMap.keydown({ code: 'ArrowLeft' });
+    eventMap.keydown({ code: 'ArrowRight' });
+    eventMap.keyup({ code: 'ArrowLeft' });
+    expect(hero.moveRight).toBeCalledTimes(1);
+    expect(hero.moveLeft).toBeCalledTimes(1);
+    expect(hero.stopX).toBeCalledTimes(0);
+    jest.clearAllMocks();
+    eventMap.keydown({ code: 'ArrowRight' });
+    eventMap.keydown({ code: 'ArrowLeft' });
+    eventMap.keyup({ code: 'ArrowRight' });
+    expect(hero.moveRight).toBeCalledTimes(1);
+    expect(hero.moveLeft).toBeCalledTimes(1);
+    expect(hero.stopX).toBeCalledTimes(0);
+  });
 });
 
 describe.skip('socket', () => {

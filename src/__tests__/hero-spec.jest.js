@@ -231,6 +231,7 @@ describe('collisions', () => {
         x: plat.getLeft() + 50,
         y: plat.getTop(),
       });
+      hero.update(platforms);
       hero.jump();
       hero.update(platforms);
 
