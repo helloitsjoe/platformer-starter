@@ -1,4 +1,4 @@
-import Hero from '../hero';
+import Hero, { GRAVITY, VELOCITY, MAX_VELOCITY } from '../hero';
 import Platform from '../platform';
 
 let hero;
@@ -85,6 +85,27 @@ describe('movement', () => {
     expect(hero.vx).toBeGreaterThan(0);
     hero.stopX();
     expect(hero.vx).toBe(0);
+  });
+
+  it('hero downward speed increases, maxes out', () => {
+    hero.place({ x: 0, y: 0 });
+    const vStart = hero.vy;
+    hero.update();
+    const vOne = hero.vy;
+    expect(vOne).toBeGreaterThan(vStart);
+    hero.update();
+    const vTwo = hero.vy;
+    expect(vTwo).toBeGreaterThan(vOne);
+
+    // Get downward speed up to max
+    let updateTimes = 30;
+    while (updateTimes--) {
+      hero.update();
+    }
+
+    const vMax = hero.vy;
+    hero.update();
+    expect(hero.vy).toBe(vMax);
   });
 });
 
@@ -231,6 +252,7 @@ describe('collisions', () => {
         x: plat.getLeft() + 50,
         y: plat.getTop(),
       });
+      // call update to ground hero
       hero.update(platforms);
       hero.jump();
       hero.update(platforms);
@@ -251,6 +273,41 @@ describe('collisions', () => {
 
       // vy > 0 is moving down
       expect(hero.vy).toBeGreaterThan(0);
+    });
+
+    it('cancelJump stops upward momentum', () => {
+      hero.place({
+        x: plat.getLeft() + 50,
+        y: plat.getTop(),
+      });
+      hero.update(platforms);
+      hero.jump();
+      expect(hero.vy).toBe(-MAX_VELOCITY);
+      hero.update(platforms);
+      expect(hero.vy).toBe(-MAX_VELOCITY + GRAVITY);
+      hero.cancelJump();
+      expect(hero.vy).not.toBe(-MAX_VELOCITY + GRAVITY * 2);
+      expect(hero.vy).toBe(-VELOCITY);
+    });
+
+    it('cancelJump does not affect downward momentum', () => {
+      hero.place({
+        x: plat.getLeft() + 50,
+        y: plat.getTop(),
+      });
+      hero.update(platforms);
+      hero.jump();
+      expect(hero.vy).toBeLessThan(0);
+      let updateTimes = 30;
+      while (updateTimes--) {
+        hero.update(platforms);
+      }
+      const vInitialDescent = hero.vy;
+      expect(vInitialDescent).toBeGreaterThan(0);
+      hero.cancelJump();
+      hero.update(platforms);
+      expect(hero.vy).toBe(vInitialDescent + GRAVITY);
+      expect(hero.vy).not.toBe(-VELOCITY);
     });
   });
 });

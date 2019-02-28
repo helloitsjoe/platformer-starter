@@ -1,5 +1,6 @@
-const GRAVITY = 0.7;
-const VELOCITY = 5;
+export const GRAVITY = 0.7;
+export const VELOCITY = 5;
+export const MAX_VELOCITY = VELOCITY * 3;
 
 export default class Hero {
   constructor({ canvas, x, y, grounded = true } = {}) {
@@ -19,7 +20,14 @@ export default class Hero {
 
   jump() {
     if (this._grounded) {
-      this.vy = -VELOCITY * 3;
+      this.vy = -MAX_VELOCITY;
+    }
+  }
+
+  cancelJump() {
+    // Only cancel velocity if moving upward
+    if (this.vy < 0) {
+      this.vy = -VELOCITY;
     }
   }
 
@@ -41,7 +49,9 @@ export default class Hero {
   }
 
   update(platforms) {
-    this.vy += GRAVITY;
+    if (this.vy < MAX_VELOCITY) {
+      this.vy += GRAVITY;
+    }
     this.x += this.vx;
     this.y += this.vy;
 
@@ -50,6 +60,9 @@ export default class Hero {
 
   draw(ctx) {
     ctx.fillStyle = 'white';
+    // ctx.beginPath();
+    // ctx.arc(this.x, this.y - this._offsetY / 2, this._offsetX, 0, Math.PI * 2);
+    // ctx.fill();
     ctx.fillRect(
       this.x - this._offsetX,
       this.y - this._offsetY,

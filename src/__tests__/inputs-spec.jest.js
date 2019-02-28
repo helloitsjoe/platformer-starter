@@ -37,6 +37,17 @@ describe('keyboard', () => {
     eventMap.keyup({ code: 'Poo' });
   });
 
+  it('space keyup cancels jump', () => {
+    const hero = {
+      jump: jest.fn(),
+      cancelJump: jest.fn(),
+    };
+    const keyboard = new Keyboard(hero, window);
+    eventMap.keydown({ code: 'Space' });
+    eventMap.keyup({ code: 'Space' });
+    expect(hero.cancelJump).toBeCalled();
+  });
+
   it('keyup does not stop hero if the opposite key is down', () => {
     const hero = {
       moveRight: jest.fn(),

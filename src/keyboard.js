@@ -15,7 +15,7 @@ export default class Keyboard {
     this.keyUpMap = {
       ArrowLeft: () => !this.keysDown.has('ArrowRight') && this.hero.stopX(),
       ArrowRight: () => !this.keysDown.has('ArrowLeft') && this.hero.stopX(),
-      // Space: () => {}, // TODO: Cancel jump?
+      Space: () => this.hero.cancelJump(),
     };
   }
 
