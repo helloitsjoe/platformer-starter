@@ -18,10 +18,16 @@ it('draws hero', () => {
   expect(mockCtx.fillRect).toBeCalledTimes(1);
 });
 
+it('uses color if provided', () => {
+  const hero2 = new Hero({ color: 'limegreen' });
+  const mockCtx = { fillStyle: '', fillRect: jest.fn() };
+  hero2.draw(mockCtx);
+  expect(mockCtx.fillStyle).toBe('limegreen');
+});
+
 it('creates canvas if none provided', () => {
-  let hero2 = new Hero();
+  const hero2 = new Hero();
   expect(hero2.canvas).toBeInstanceOf(HTMLCanvasElement);
-  hero2 = null;
 });
 
 describe('movement', () => {
@@ -70,7 +76,7 @@ describe('movement', () => {
 
   it('hero drops if not on floor', () => {
     const INITIAL_Y = 50;
-    hero.y = INITIAL_Y;
+    hero.place({ y: INITIAL_Y });
     hero.update();
     expect(hero.y).toBeGreaterThan(INITIAL_Y);
   });
@@ -111,7 +117,7 @@ describe('movement', () => {
 
 describe('collisions', () => {
   it('left wall: should not move left', () => {
-    hero.x = 0;
+    hero.place({ x: 0 });
     hero.moveLeft();
     hero.update();
     expect(hero.x).toBe(0);
@@ -119,7 +125,7 @@ describe('collisions', () => {
 
   it('right wall: should not move right', () => {
     // Position at right wall
-    hero.x = canvas.width;
+    hero.place({ x: canvas.width });
     hero.moveRight();
     hero.update();
     // Hero should not move to the right
@@ -128,7 +134,7 @@ describe('collisions', () => {
 
   it('floor: should not move below', () => {
     // Position hero at bottom of screen
-    hero.y = canvas.height;
+    hero.place({ y: canvas.height });
     hero.update();
     expect(hero.getBottom()).not.toBeGreaterThan(canvas.height);
   });

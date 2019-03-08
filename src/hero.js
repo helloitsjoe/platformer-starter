@@ -3,7 +3,7 @@ export const VELOCITY = 5;
 export const MAX_VELOCITY = VELOCITY * 3;
 
 export default class Hero {
-  constructor({ canvas, x, y, grounded = true } = {}) {
+  constructor({ canvas, x, y, color = 'white', grounded = true } = {}) {
     this.canvas = canvas || document.createElement('canvas');
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
@@ -12,6 +12,7 @@ export default class Hero {
     this.vy = 0;
     this.width = 20;
     this.height = 20;
+    this._color = color;
     this._grounded = grounded;
     this._offsetX = this.width / 2;
     this._offsetY = this.height;
@@ -59,10 +60,13 @@ export default class Hero {
   }
 
   draw(ctx) {
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = this._color;
+    // circle
     // ctx.beginPath();
     // ctx.arc(this.x, this.y - this._offsetY / 2, this._offsetX, 0, Math.PI * 2);
     // ctx.fill();
+
+    // square
     ctx.fillRect(
       this.x - this._offsetX,
       this.y - this._offsetY,
@@ -95,31 +99,28 @@ export default class Hero {
   _checkPlatformCollisions(platforms = []) {
     this._grounded = false;
     platforms.forEach(platform => {
-      const isWithinPlatformX =
-        this.getRight() > platform.getLeft() &&
-        this.getLeft() < platform.getRight();
-      const isWithinPlatformY =
-        this.getBottom() > platform.getTop() &&
-        this.getTop() < platform.getBottom();
+      // Return early if no overlap with platform
+      if (this.getRight() < platform.getLeft()) return;
+      if (this.getLeft() > platform.getRight()) return;
+      if (this.getBottom() < platform.getTop()) return;
+      if (this.getTop() > platform.getBottom()) return;
 
-      if (isWithinPlatformX && isWithinPlatformY) {
-        // This is janky, hero will slip off if very close to the edge.
-        // Keep track of prev position instead?
-        // OR updateX, checkX, updateY, checkY (see mario-lesson)
-        if (this.getLeft() + this._marginX < platform.getLeft()) {
-          this.x = platform.getLeft() - this._offsetX;
-        } else if (this.getRight() - this._marginX > platform.getRight()) {
-          this.x = platform.getRight() + this._offsetX;
-        } else if (this.vy < 0) {
-          // If hero collides with the bottom of a platform while
-          // jumping, move top of hero to below bottom of platform
-          this.y = platform.getBottom() + this._offsetY;
-          this.vy = 0;
-        } else {
-          this.y = platform.getTop();
-          this._grounded = true;
-          this.vy = 0;
-        }
+      // This is janky, hero will slip off if very close to the edge.
+      // Keep track of prev position instead?
+      // OR updateX, checkX, updateY, checkY (see mario-lesson)
+      if (this.getLeft() + this._marginX < platform.getLeft()) {
+        this.x = platform.getLeft() - this._offsetX;
+      } else if (this.getRight() - this._marginX > platform.getRight()) {
+        this.x = platform.getRight() + this._offsetX;
+      } else if (this.vy < 0) {
+        // If hero collides with the bottom of a platform while
+        // jumping, move top of hero to below bottom of platform
+        this.y = platform.getBottom() + this._offsetY;
+        this.vy = 0;
+      } else {
+        this.y = platform.getTop();
+        this._grounded = true;
+        this.vy = 0;
       }
     });
   }
