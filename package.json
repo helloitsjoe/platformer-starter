@@ -7,7 +7,7 @@
     "server": "nodemon server",
     "start": "npm run server",
     "watch": "webpack --watch --mode development",
-    "test": "jest --watch --verbose --coverage"
+    "test": "jest --verbose --coverage"
   },
   "repository": {
     "type": "git",
