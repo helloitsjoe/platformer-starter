@@ -1,4 +1,4 @@
-import Hero, { GRAVITY, VELOCITY, MAX_VELOCITY } from '../hero';
+import Hero, { GRAVITY, VELOCITY, MAX_VY, MAX_VX } from '../hero';
 import Platform from '../platform';
 
 let hero;
@@ -74,23 +74,60 @@ describe('movement', () => {
     expect(hero.x).toBeGreaterThan(initialX);
   });
 
-  it('hero drops if not on floor', () => {
-    const INITIAL_Y = 50;
-    hero.place({ y: INITIAL_Y });
-    hero.update();
-    expect(hero.y).toBeGreaterThan(INITIAL_Y);
-  });
-
-  it('hero stops', () => {
+  it('hero stops (left)', () => {
     hero.moveLeft();
+    hero.update();
     expect(hero.vx).toBeLessThan(0);
     hero.stopX();
     expect(hero.vx).toBe(0);
+  });
 
+  it('hero stops (right)', () => {
     hero.moveRight();
+    hero.update();
     expect(hero.vx).toBeGreaterThan(0);
     hero.stopX();
     expect(hero.vx).toBe(0);
+  });
+
+  it('hero accelerates from a stop, maxes out (left)', () => {
+    hero.moveLeft();
+    hero.update();
+    const vOne = hero.vx;
+    hero.update();
+    const vTwo = hero.vx;
+    expect(vTwo).toBeLessThan(vOne);
+
+    // Get downward speed up to max
+    let updateTimes = 30;
+    while (updateTimes--) {
+      hero.update();
+    }
+
+    const vMax = hero.vx;
+    hero.update();
+    expect(hero.vx).toBe(vMax);
+    expect(hero.vx).toBe(-MAX_VX);
+  });
+
+  it('hero accelerates from a stop, maxes out (right)', () => {
+    hero.moveRight();
+    hero.update();
+    const vOne = hero.vx;
+    hero.update();
+    const vTwo = hero.vx;
+    expect(vTwo).toBeGreaterThan(vOne);
+
+    // Get downward speed up to max
+    let updateTimes = 30;
+    while (updateTimes--) {
+      hero.update();
+    }
+
+    const vMax = hero.vx;
+    hero.update();
+    expect(hero.vx).toBe(vMax);
+    expect(hero.vx).toBe(MAX_VX);
   });
 
   it('hero downward speed increases, maxes out', () => {
@@ -209,6 +246,7 @@ describe('collisions', () => {
     });
 
     it('hero bumps into left side', () => {
+      hero = new Hero({ canvas, accelX: VELOCITY });
       // Platform is sitting on the ground
       plat.place({ y: canvas.height - plat.height });
       hero.place({
@@ -224,6 +262,7 @@ describe('collisions', () => {
     });
 
     it('hero bumps into right side', () => {
+      hero = new Hero({ canvas, accelX: VELOCITY });
       // Platform is sitting on the ground
       plat.place({ y: canvas.height - plat.height });
       hero.place({
@@ -288,11 +327,11 @@ describe('collisions', () => {
       });
       hero.update(platforms);
       hero.jump();
-      expect(hero.vy).toBe(-MAX_VELOCITY);
+      expect(hero.vy).toBe(-MAX_VY);
       hero.update(platforms);
-      expect(hero.vy).toBe(-MAX_VELOCITY + GRAVITY);
+      expect(hero.vy).toBe(-MAX_VY + GRAVITY);
       hero.cancelJump();
-      expect(hero.vy).not.toBe(-MAX_VELOCITY + GRAVITY * 2);
+      expect(hero.vy).not.toBe(-MAX_VY + GRAVITY * 2);
       expect(hero.vy).toBe(-VELOCITY);
     });
 

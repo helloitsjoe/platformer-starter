@@ -1,9 +1,17 @@
 export const GRAVITY = 0.7;
 export const VELOCITY = 5;
-export const MAX_VELOCITY = VELOCITY * 3;
+export const MAX_VX = 5;
+export const MAX_VY = VELOCITY * 3;
 
 export default class Hero {
-  constructor({ canvas, x, y, color = 'white', grounded = true } = {}) {
+  constructor({
+    canvas,
+    x,
+    y,
+    color = 'white',
+    grounded = true,
+    accelX = 0.75,
+  } = {}) {
     this.canvas = canvas || document.createElement('canvas');
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
@@ -12,7 +20,9 @@ export default class Hero {
     this.vy = 0;
     this.width = 20;
     this.height = 20;
+    this._direction = 0;
     this._color = color;
+    this._accelX = accelX;
     this._grounded = grounded;
     this._offsetX = this.width / 2;
     this._offsetY = this.height;
@@ -20,8 +30,9 @@ export default class Hero {
   }
 
   jump() {
+    // FIXME: User can hold space and keep jumping
     if (this._grounded) {
-      this.vy = -MAX_VELOCITY;
+      this.vy = -MAX_VY;
     }
   }
 
@@ -33,14 +44,15 @@ export default class Hero {
   }
 
   moveLeft() {
-    this.vx = -VELOCITY;
+    this._direction = -1;
   }
 
   moveRight() {
-    this.vx = VELOCITY;
+    this._direction = 1;
   }
 
   stopX() {
+    this._direction = 0;
     this.vx = 0;
   }
 
@@ -49,12 +61,25 @@ export default class Hero {
     this.y = y;
   }
 
-  update(platforms) {
-    if (this.vy < MAX_VELOCITY) {
-      this.vy += GRAVITY;
+  getVX() {
+    this.vx += this._accelX * this._direction;
+    if (Math.abs(this.vx) > MAX_VX) {
+      this.vx = MAX_VX * this._direction;
     }
-    this.x += this.vx;
-    this.y += this.vy;
+    return this.vx;
+  }
+
+  getVY() {
+    this.vy += GRAVITY;
+    if (this.vy > MAX_VY) {
+      this.vy = MAX_VY;
+    }
+    return this.vy;
+  }
+
+  update(platforms) {
+    this.x += this.getVX();
+    this.y += this.getVY();
 
     this._checkCollisions(platforms);
   }
