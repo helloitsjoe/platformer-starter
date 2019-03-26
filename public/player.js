@@ -1,18 +1,16 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
+canvas.height = canvas.width / 2;
 
 const isIn = (pos, square) => {
   const [x, y, size] = square;
-  console.log(`pos:`, pos);
-  console.log(`square:`, square);
   return pos.x > x && pos.x < x + size && pos.y > y && pos.y < y + size;
 };
 
 const makeSquare = (x, y, size = SIZE) => [x * size, y * size, size, size];
 
-const SIZE = 50;
+const SIZE = canvas.width / 6;
 
 const upButton = makeSquare(1, 0);
 const leftButton = makeSquare(0, 1);
@@ -38,13 +36,24 @@ const socket = io();
 
 socket.on('connected', () => console.log('connected!'));
 
-canvas.addEventListener('click', e => {
-  const { clientX: x, clientY: y } = e;
-  console.log(`x:`, x);
-  console.log(`y`, y);
+canvas.addEventListener('touchstart', e => {
+  const { pageX: x, pageY: y } = e;
   if (isIn({ x, y }, leftButton)) {
-    socket.emit('tap', 'left');
+    socket.emit('tapDown', 'padLeft');
   } else if (isIn({ x, y }, rightButton)) {
-    socket.emit('tap', 'right');
+    socket.emit('tapDown', 'padRight');
+  } else if (isIn({ x, y }, jumpButton)) {
+    socket.emit('tapDown', 'button');
+  }
+});
+
+canvas.addEventListener('touchend', e => {
+  const { pageX: x, pageY: y } = e;
+  if (isIn({ x, y }, leftButton)) {
+    socket.emit('tapUp', 'padLeft');
+  } else if (isIn({ x, y }, rightButton)) {
+    socket.emit('tapUp', 'padRight');
+  } else if (isIn({ x, y }, jumpButton)) {
+    socket.emit('tapUp', 'button');
   }
 });

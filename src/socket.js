@@ -6,11 +6,39 @@ export default class Socket {
     this.hero = hero;
     this.socket = io(url);
     this.socket.on('connected', () => console.log('connected!'));
-    this.socket.on('relay-tap', this.handleTap.bind(this));
+    this.socket.on('relay-tapDown', this.handleTapDown.bind(this));
+    this.socket.on('relay-tapUp', this.handleTapUp.bind(this));
+
+    this.tapDownMap = {
+      button: this.hero.jump,
+      padLeft: this.hero.moveLeft,
+      padRight: this.hero.moveRight,
+    };
+
+    this.tapUpMap = {
+      button: this.hero.cancelJump,
+      padLeft: this.hero.stopX,
+      padRight: this.hero.stopX,
+    };
   }
 
-  handleTap(e) {
-    console.log(`clicked! e:`, e);
-    this.hero.jump();
+  handleTapDown(command) {
+    const func = this.tapDownMap[command];
+    if (!func) {
+      console.log(`No tapDown handler for ${func}`);
+      return;
+    }
+    func();
+    this.socket.emit('handled');
+  }
+
+  handleTapUp(command) {
+    const func = this.tapUpMap[command];
+    if (!func) {
+      console.log(`No tapUp handler for ${func}`);
+      return;
+    }
+    func();
+    this.socket.emit('handled');
   }
 }

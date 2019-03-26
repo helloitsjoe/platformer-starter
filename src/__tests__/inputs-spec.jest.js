@@ -74,7 +74,7 @@ describe('keyboard', () => {
   });
 });
 
-describe.skip('socket', () => {
+describe('socket', () => {
   const PORT = 1234;
   let server;
   let sender;
@@ -98,14 +98,24 @@ describe.skip('socket', () => {
     server.close(done);
   });
 
-  it('jumps', done => {
-    const hero = { jump: jest.fn() };
+  test.each`
+    description             | eventName    | command       | func
+    ${'jumps'}              | ${'tapDown'} | ${'button'}   | ${'jump'}
+    ${'moves left'}         | ${'tapDown'} | ${'padLeft'}  | ${'moveLeft'}
+    ${'moves right'}        | ${'tapDown'} | ${'padRight'} | ${'moveRight'}
+    ${'cancels jump'}       | ${'tapUp'}   | ${'button'}   | ${'cancelJump'}
+    ${'stops moving left'}  | ${'tapUp'}   | ${'padLeft'}  | ${'stopX'}
+    ${'stops moving right'} | ${'tapUp'}   | ${'padRight'} | ${'stopX'}
+  `('$description', ({ eventName, command, func }, done) => {
+    // Silence console logs for these tests
+    console.log = jest.fn();
+    const hero = { [func]: jest.fn() };
     const socket = new Socket(hero, window, PORT);
     socket.socket.on('connected', () => {
-      expect(hero.jump).toBeCalledTimes(0);
-      sender.emit('tap');
-      socket.socket.on('relay-tap', () => {
-        expect(hero.jump).toBeCalledTimes(1);
+      expect(hero[func]).toBeCalledTimes(0);
+      sender.emit(eventName, command);
+      sender.on('handled', () => {
+        expect(hero[func]).toBeCalledTimes(1);
         done();
       });
     });

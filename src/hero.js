@@ -27,6 +27,12 @@ export default class Hero {
     this._offsetX = this.width / 2;
     this._offsetY = this.height;
     this._marginX = this.width - (VELOCITY + 1);
+
+    this.jump = this.jump.bind(this);
+    this.stopX = this.stopX.bind(this);
+    this.moveLeft = this.moveLeft.bind(this);
+    this.moveRight = this.moveRight.bind(this);
+    this.cancelJump = this.cancelJump.bind(this);
   }
 
   jump() {

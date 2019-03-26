@@ -22,10 +22,14 @@ const createServer = (port = 3001) => {
   io.on('connection', socket => {
     console.log(`A new user connected!`);
     socket.emit('connected');
-    socket.on('tap', direction => {
-      console.log(`tapped: ${direction}`);
-      socket.broadcast.emit('relay-tap');
-    });
+
+    const handleEvent = eventName => command => {
+      socket.broadcast.emit(eventName, command);
+    };
+
+    socket.on('tapDown', handleEvent('relay-tapDown'));
+    socket.on('tapUp', handleEvent('relay-tapUp'));
+    socket.on('handled', handleEvent('handled'));
 
     socket.on('disconnect', () => {
       console.log(`user disconnected`);
