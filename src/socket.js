@@ -24,21 +24,21 @@ export default class Socket {
 
   handleTapDown(command) {
     const func = this.tapDownMap[command];
-    if (!func) {
+    if (func) {
+      func();
+      this.socket.emit('handled');
+    } else {
       console.log(`No tapDown handler for ${func}`);
-      return;
     }
-    func();
-    this.socket.emit('handled');
   }
 
   handleTapUp(command) {
     const func = this.tapUpMap[command];
-    if (!func) {
+    if (func) {
+      func();
+      this.socket.emit('handled');
+    } else {
       console.log(`No tapUp handler for ${func}`);
-      return;
     }
-    func();
-    this.socket.emit('handled');
   }
 }

@@ -36,7 +36,6 @@ export default class Hero {
   }
 
   jump() {
-    // FIXME: User can hold space and keep jumping
     if (this._grounded) {
       this.vy = -MAX_VY;
     }
@@ -92,18 +91,22 @@ export default class Hero {
 
   draw(ctx) {
     ctx.fillStyle = this._color;
-    // circle
-    // ctx.beginPath();
-    // ctx.arc(this.x, this.y - this._offsetY / 2, this._offsetX, 0, Math.PI * 2);
-    // ctx.fill();
+    this.drawSquare(ctx);
+  }
 
-    // square
+  drawSquare(ctx) {
     ctx.fillRect(
       this.x - this._offsetX,
       this.y - this._offsetY,
       this.width,
       this.height
     );
+  }
+
+  drawCircle(ctx) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y - this._offsetY / 2, this._offsetX, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   getTop() {
@@ -136,9 +139,9 @@ export default class Hero {
       if (this.getBottom() < platform.getTop()) return;
       if (this.getTop() > platform.getBottom()) return;
 
-      // This is janky, hero will slip off if very close to the edge.
+      // TODO: This is a little janky, hero will slip off if very close to the edge.
       // Keep track of prev position instead?
-      // OR updateX, checkX, updateY, checkY (see mario-lesson)
+      // OR updateX, checkX, updateY, checkY?
       if (this.getLeft() + this._marginX < platform.getLeft()) {
         this.x = platform.getLeft() - this._offsetX;
       } else if (this.getRight() - this._marginX > platform.getRight()) {

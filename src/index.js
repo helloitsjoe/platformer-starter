@@ -38,10 +38,11 @@ platforms.push(
     height: 20,
   })
 );
+
 const keyboardInput = new Keyboard(hero, window);
 const socketInput = new Socket(hero, window);
 
-function update(deltaTime) {
+function update(/* deltaTime */) {
   bg.draw(ctx);
   hero.update(platforms);
   hero.draw(ctx);
