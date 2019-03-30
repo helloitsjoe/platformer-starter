@@ -103,11 +103,11 @@ export default class Hero {
     );
   }
 
-  drawCircle(ctx) {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y - this._offsetY / 2, this._offsetX, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  // drawCircle(ctx) {
+  //   ctx.beginPath();
+  //   ctx.arc(this.x, this.y - this._offsetY / 2, this._offsetX, 0, Math.PI * 2);
+  //   ctx.fill();
+  // }
 
   getTop() {
     return this.y - this._offsetY;
