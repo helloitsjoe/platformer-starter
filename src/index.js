@@ -18,7 +18,6 @@ function fillScreen(canvas) {
 const bg = new Background({ canvas });
 const hero = new Hero({ canvas });
 const platforms = createPlatforms({ canvas });
-console.log(`platforms:`, platforms);
 
 const keyboardInput = new Keyboard(hero, window);
 const socketInput = new Socket(hero, window);
