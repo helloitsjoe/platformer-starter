@@ -1,5 +1,5 @@
 import Hero from './hero';
-import Platform, { makeRandomPlatform } from './platform';
+import Platform, { makeRandomPlatform, createPlatforms } from './platform';
 import Background from './background';
 import Keyboard from './keyboard';
 import Socket from './socket';
@@ -17,27 +17,8 @@ function fillScreen(canvas) {
 
 const bg = new Background({ canvas });
 const hero = new Hero({ canvas });
-const platforms = new Array(5)
-  .fill(null)
-  .map(makeRandomPlatform({ maxX: canvas.width, maxY: canvas.height }));
-// create platform for testing left/right collisions
-platforms.push(
-  new Platform({
-    x: canvas.width - 300,
-    y: canvas.height - 100,
-    width: 200,
-    height: 100,
-  })
-);
-// create ground
-platforms.push(
-  new Platform({
-    x: 0,
-    y: canvas.height - 20,
-    width: canvas.width,
-    height: 20,
-  })
-);
+const platforms = createPlatforms({ canvas });
+console.log(`platforms:`, platforms);
 
 const keyboardInput = new Keyboard(hero, window);
 const socketInput = new Socket(hero, window);

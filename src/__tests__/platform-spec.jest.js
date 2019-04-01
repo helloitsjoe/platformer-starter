@@ -1,4 +1,10 @@
-import Platform, { makeRandomPlatform } from '../platform';
+import Platform, {
+  makeRandomPlatform,
+  createPlatforms,
+  DEFAULT_PLATFORM_HEIGHT,
+  DEFAULT_PLATFORM_WIDTH,
+  DEFAULT_PLATFORMS,
+} from '../platform';
 
 describe('platform', () => {
   it('draws platform', () => {
@@ -39,10 +45,36 @@ describe('platform', () => {
     expect(plat.x).toBe(42);
     expect(plat.y).toBe(128);
   });
+});
 
+describe('createPlatforms()', () => {
+  it('first platform is ground', () => {
+    const canvas = document.createElement('canvas');
+    const [ground] = createPlatforms({ canvas });
+    expect(ground.getBottom()).toBe(canvas.height);
+    expect(ground.getTop()).toBe(canvas.height - DEFAULT_PLATFORM_HEIGHT);
+    expect(ground.getLeft()).toBe(0);
+    expect(ground.getRight()).toBe(canvas.width);
+  });
+
+  it('creates n platforms plus ground', () => {
+    const num = 7;
+    const platforms = createPlatforms({ num });
+    // TEMP: Adding an extra platform for left/right testing
+    expect(platforms.length).toBe(num + 1 + 1);
+  });
+
+  it('creates default number of platforms plus ground', () => {
+    const platforms = createPlatforms();
+    // TEMP: Adding an extra platform for left/right testing
+    expect(platforms.length).toBe(DEFAULT_PLATFORMS + 1 + 1);
+  });
+});
+
+describe('makeRandomPlatform()', () => {
   it('makeRandomPlatform creates platform on screen', () => {
     const options = { maxX: 200, maxY: 200, width: 20, height: 10 };
-    const plat = makeRandomPlatform(options)();
+    const plat = makeRandomPlatform(options);
     expect(plat.x).toBeGreaterThanOrEqual(0);
     expect(plat.y).toBeGreaterThanOrEqual(0);
     expect(plat.x + plat.width).toBeLessThanOrEqual(options.maxX);
@@ -51,10 +83,12 @@ describe('platform', () => {
 
   it('makeRandomPlatform default width/height if none provided', () => {
     const options = { maxX: 1000, maxY: 800 };
-    const plat = makeRandomPlatform(options)();
+    const plat = makeRandomPlatform(options);
     expect(plat.x).toBeGreaterThanOrEqual(0);
     expect(plat.y).toBeGreaterThanOrEqual(0);
     expect(plat.x + plat.width).toBeLessThanOrEqual(options.maxX);
     expect(plat.y + plat.height).toBeLessThanOrEqual(options.maxY);
   });
+
+  xit('uses previous platform for min/max values', () => {});
 });
