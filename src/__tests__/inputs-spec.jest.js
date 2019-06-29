@@ -23,12 +23,12 @@ describe('keyboard', () => {
     ${'ArrowLeft'}  | ${'keyup'}   | ${'stopX'}
     ${'ArrowRight'} | ${'keyup'}   | ${'stopX'}
   `('$key triggers $method', ({ key, event, method }) => {
-    const hero = { [method]: jest.fn() };
-    const keyboard = new Keyboard(hero, window);
-    expect(hero[method]).toBeCalledTimes(0);
-    eventMap[event]({ code: key });
-    expect(hero[method]).toBeCalledTimes(1);
-  });
+  const hero = { [method]: jest.fn() };
+  const keyboard = new Keyboard(hero, window);
+  expect(hero[method]).toBeCalledTimes(0);
+  eventMap[event]({ code: key });
+  expect(hero[method]).toBeCalledTimes(1);
+});
 
   it('unhandled methods do not throw', () => {
     const hero = {};
@@ -74,7 +74,7 @@ describe('keyboard', () => {
   });
 });
 
-xdescribe('socket', () => {
+describe('socket', () => {
   const PORT = 1234;
   let server;
   let sender;
@@ -107,17 +107,17 @@ xdescribe('socket', () => {
     ${'stops moving left'}  | ${'tapUp'}   | ${'padLeft'}  | ${'stopX'}
     ${'stops moving right'} | ${'tapUp'}   | ${'padRight'} | ${'stopX'}
   `('$description', ({ eventName, command, func }, done) => {
-    // Silence console logs for these tests
-    console.log = jest.fn();
-    const hero = { [func]: jest.fn() };
-    const socket = new Socket(hero, window, PORT);
-    socket.socket.on('connected', () => {
-      expect(hero[func]).toBeCalledTimes(0);
-      sender.emit(eventName, command);
-      sender.on('handled', () => {
-        expect(hero[func]).toBeCalledTimes(1);
-        done();
-      });
+  // Silence console logs for these tests
+  console.log = jest.fn();
+  const hero = { [func]: jest.fn() };
+  const socket = new Socket(hero, window, PORT);
+  socket.socket.on('connected', () => {
+    expect(hero[func]).toBeCalledTimes(0);
+    sender.emit(eventName, command);
+    sender.on('handled', () => {
+      expect(hero[func]).toBeCalledTimes(1);
+      done();
     });
   });
+});
 });

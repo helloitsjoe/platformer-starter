@@ -14,10 +14,6 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-plusplus': 'off',
     'no-prototype-builtins': 'off',
-    'react/jsx-filename-extension': 'off',
-    'jsx-a11y/click-events-have-key-events': 'off', // TODO: Re-enable after POC
-    'jsx-a11y/no-static-element-interactions': 'off', // TODO: Re-enable after POC
-    'react/destructuring-assignment': 'off',
     'arrow-parens': ['error', 'as-needed'],
     'comma-dangle': ['error', 'only-multiline'],
   },
