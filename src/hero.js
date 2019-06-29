@@ -2,6 +2,8 @@ export const GRAVITY = 0.7;
 export const VELOCITY = 5;
 export const MAX_VX = 5;
 export const MAX_VY = VELOCITY * 3;
+export const HERO_IMAGE_SRC = './assets/skull.png';
+export const TILE_SIZE = 128;
 
 export default class Hero {
   constructor({
@@ -16,10 +18,12 @@ export default class Hero {
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
 
+    this.image = null;
+
     this.vx = 0;
     this.vy = 0;
-    this.width = 20;
-    this.height = 20;
+    this.width = 40;
+    this.height = 40;
     this._direction = 0;
     this._color = color;
     this._accelX = accelX;
@@ -33,6 +37,10 @@ export default class Hero {
     this.moveLeft = this.moveLeft.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.cancelJump = this.cancelJump.bind(this);
+  }
+
+  init(image = new Image()) {
+    return this.loadImage(image);
   }
 
   jump() {
@@ -50,10 +58,12 @@ export default class Hero {
 
   moveLeft() {
     this._direction = -1;
+    this.facingDirection = this._direction;
   }
 
   moveRight() {
     this._direction = 1;
+    this.facingDirection = this._direction;
   }
 
   stopX() {
@@ -89,19 +99,43 @@ export default class Hero {
     this._checkCollisions(platforms);
   }
 
-  draw(ctx) {
-    ctx.fillStyle = this._color;
-    this.drawSquare(ctx);
+  loadImage(image = new Image()) {
+    return new Promise((resolve, reject) => {
+      this.image = image;
+      this.image.src = HERO_IMAGE_SRC;
+      this.image.onload = () => resolve();
+    });
   }
 
-  drawSquare(ctx) {
-    ctx.fillRect(
+  draw(ctx) {
+    ctx.fillStyle = this._color;
+    this.drawImage(ctx);
+  }
+
+  drawImage(ctx) {
+    if (!this.image) return;
+
+    ctx.drawImage(
+      this.image,
+      this.facingDirection > 0 ? TILE_SIZE : 0,
+      0,
+      TILE_SIZE,
+      TILE_SIZE,
       this.x - this._offsetX,
       this.y - this._offsetY,
       this.width,
       this.height
     );
   }
+
+  // drawSquare(ctx) {
+  //   ctx.fillRect(
+  //     this.x - this._offsetX,
+  //     this.y - this._offsetY,
+  //     this.width,
+  //     this.height
+  //   );
+  // }
 
   // drawCircle(ctx) {
   //   ctx.beginPath();

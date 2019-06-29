@@ -17,18 +17,20 @@ function fillScreen(canvas) {
 
 const bg = new Background({ canvas });
 const hero = new Hero({ canvas });
-const platforms = createPlatforms({ canvas });
+hero.init().then(() => {
+  const platforms = createPlatforms({ canvas });
 
-const keyboardInput = new Keyboard(hero, window);
-const socketInput = new Socket(hero, window);
+  const keyboardInput = new Keyboard(hero, window);
+  const socketInput = new Socket(hero, window);
 
-function update(/* deltaTime */) {
-  bg.draw(ctx);
-  hero.update(platforms);
-  hero.draw(ctx);
-  platforms.forEach(platform => platform.draw(ctx));
+  function update(/* deltaTime */) {
+    bg.draw(ctx);
+    hero.update(platforms);
+    hero.draw(ctx);
+    platforms.forEach(platform => platform.draw(ctx));
 
-  requestAnimationFrame(update);
-}
+    requestAnimationFrame(update);
+  }
 
-update();
+  update();
+});

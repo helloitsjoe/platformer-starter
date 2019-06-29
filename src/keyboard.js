@@ -7,9 +7,9 @@ export default class Keyboard {
     this.keysDown = new Set();
 
     this.keyDownMap = {
-      ArrowLeft: () => this.hero.moveLeft(),
-      ArrowRight: () => this.hero.moveRight(),
-      Space: () => this.hero.jump(),
+      ArrowLeft: this.hero.moveLeft,
+      ArrowRight: this.hero.moveRight,
+      Space: this.hero.jump,
     };
 
     this.keyUpMap = {
