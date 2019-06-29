@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import io from 'socket.io-client';
 
 export default class Socket {

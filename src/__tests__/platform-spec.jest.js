@@ -2,7 +2,6 @@ import Platform, {
   makeRandomPlatform,
   createPlatforms,
   DEFAULT_PLATFORM_HEIGHT,
-  DEFAULT_PLATFORM_WIDTH,
   DEFAULT_PLATFORMS,
 } from '../platform';
 

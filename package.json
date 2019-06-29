@@ -34,7 +34,6 @@
     "@babel/preset-env": "^7.2.3",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
-    "body-parser": "^1.18.3",
     "eslint": "^5.15.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
@@ -52,6 +51,7 @@
     ]
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "ip": "^1.1.5",
     "socket.io": "^2.2.0"

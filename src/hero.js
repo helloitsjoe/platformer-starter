@@ -6,14 +6,7 @@ export const HERO_IMAGE_SRC = './assets/skull.png';
 export const TILE_SIZE = 128;
 
 export default class Hero {
-  constructor({
-    canvas,
-    x,
-    y,
-    color = 'white',
-    grounded = true,
-    accelX = 0.75,
-  } = {}) {
+  constructor({ canvas, x, y, color = 'white', grounded = true, accelX = 0.75 } = {}) {
     this.canvas = canvas || document.createElement('canvas');
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
@@ -22,8 +15,8 @@ export default class Hero {
 
     this.vx = 0;
     this.vy = 0;
-    this.width = 40;
-    this.height = 40;
+    this.width = 60;
+    this.height = 60;
     this._direction = 0;
     this._color = color;
     this._accelX = accelX;
@@ -37,6 +30,7 @@ export default class Hero {
     this.moveLeft = this.moveLeft.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.cancelJump = this.cancelJump.bind(this);
+    this.loadImage = this.loadImage.bind(this);
   }
 
   init(image = new Image()) {
@@ -100,9 +94,9 @@ export default class Hero {
   }
 
   loadImage(image = new Image()) {
-    return new Promise((resolve, reject) => {
-      this.image = image;
-      this.image.src = HERO_IMAGE_SRC;
+    this.image = image;
+    this.image.src = HERO_IMAGE_SRC;
+    return new Promise(resolve => {
       this.image.onload = () => resolve();
     });
   }

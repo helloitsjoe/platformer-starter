@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/no-extraneous-dependencies */
 import io from 'socket.io-client';
-import Hero from '../hero';
 import Keyboard from '../keyboard';
 import Socket from '../socket';
 import { createServer } from '../../server/gameServer';

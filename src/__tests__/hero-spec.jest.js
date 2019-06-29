@@ -21,13 +21,13 @@ it('loads image on init', done => {
   mockImage.onload();
 });
 
-it('init default argument coverage :/', () => {
+it('init loads image with none provided', () => {
   hero.loadImage = jest.fn();
   hero.init();
   expect(hero.loadImage).toBeCalled();
 });
 
-it('loadImage default argument coverage :/', () => {
+it('loadImage if none provided', () => {
   hero.loadImage();
   const imgFilename = hero.image.src.slice(hero.image.src.lastIndexOf('/'));
   const srcFilename = HERO_IMAGE_SRC.slice(HERO_IMAGE_SRC.lastIndexOf('/'));

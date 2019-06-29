@@ -7,16 +7,18 @@ const body = document.querySelector('body');
 const debugPanel = document.createElement('p');
 body.appendChild(debugPanel);
 
-const debug = (...args) => (debugPanel.innerHTML = args);
+const debug = (...args) => {
+  debugPanel.innerHTML = args;
+};
 
 const isIn = (pos, square) => {
   const [x, y, size] = square;
   return pos.x > x && pos.x < x + size && pos.y > y && pos.y < y + size;
 };
 
-const makeSquare = (x, y, size = SIZE) => [x * size, y * size, size, size];
-
 const SIZE = canvas.width / 8;
+
+const makeSquare = (x, y, size = SIZE) => [x * size, y * size, size, size];
 
 const upButton = makeSquare(1, 0);
 const leftButton = makeSquare(0, 1);
@@ -37,12 +39,13 @@ ctx.fillRect(...downButton);
 ctx.fillRect(...jumpButton);
 
 // socket.io script from player.html
+// eslint-disable-next-line
 const socket = io();
 
 socket.on('connected', () => console.log('connected!'));
 
 canvas.addEventListener('touchstart', e => {
-  for (let touch of e.changedTouches) {
+  e.changedTouches.forEach(touch => {
     const { pageX: x, pageY: y } = touch;
     if (isIn({ x, y }, leftButton)) {
       debug('LEFT DOWN');
@@ -54,11 +57,11 @@ canvas.addEventListener('touchstart', e => {
       debug('BUTTON DOWN');
       socket.emit('tapDown', 'button');
     }
-  }
+  });
 });
 
 canvas.addEventListener('touchend', e => {
-  for (let touch of e.changedTouches) {
+  e.changedTouches.forEach(touch => {
     const { pageX: x, pageY: y } = touch;
     if (isIn({ x, y }, leftButton)) {
       debug('LEFT UP');
@@ -70,5 +73,5 @@ canvas.addEventListener('touchend', e => {
       debug('BUTTON UP');
       socket.emit('tapUp', 'button');
     }
-  }
+  });
 });
