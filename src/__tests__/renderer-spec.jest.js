@@ -12,6 +12,16 @@ const mockCtx = {
 describe('Renderer', () => {
   afterEach(jest.clearAllMocks);
 
+  it('can set width/height', () => {
+    const renderer = new Renderer();
+    expect(renderer.width).toBe(undefined);
+    expect(renderer.height).toBe(undefined);
+    renderer.setWidth(4);
+    renderer.setHeight(4);
+    expect(renderer.width).toBe(4);
+    expect(renderer.height).toBe(4);
+  });
+
   it('draws image by default', () => {
     const renderer = new Renderer();
     renderer.loadImage({ src: 'fake' });

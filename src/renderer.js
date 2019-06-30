@@ -10,6 +10,14 @@ export default class Renderer {
     this.tick = 0;
   }
 
+  setWidth(width) {
+    this.width = width;
+  }
+
+  setHeight(height) {
+    this.height = height;
+  }
+
   loadImage({ src, tileW, tileH, image = new Image() }) {
     return new Promise(resolve => {
       this.image = image;
@@ -32,7 +40,6 @@ export default class Renderer {
 
   drawImage({ ctx, facingDirection = 1, x, y }) {
     if (!this.image) return;
-
     // Skull
     const skullSourceX = facingDirection > 0 ? 1 : 0;
     const skullSourceY = 0;

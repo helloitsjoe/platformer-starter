@@ -15,19 +15,22 @@ export default class Hero {
     color = 'white',
     grounded = true,
     accelX = 0.75,
-    renderer = new Renderer({ width: HERO_SIZE, height: HERO_SIZE }),
+    renderer = new Renderer(),
   } = {}) {
     this.canvas = canvas || document.createElement('canvas');
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
 
-    this.renderer = renderer;
-    this.facingDirection = 1;
-
     this.vx = 0;
     this.vy = 0;
     this.width = HERO_SIZE;
     this.height = HERO_SIZE;
+
+    this.renderer = renderer;
+    this.renderer.setWidth(this.width);
+    this.renderer.setHeight(this.height);
+    this.facingDirection = 1;
+
     this._direction = 0;
     this._color = color;
     this._accelX = accelX;
@@ -104,10 +107,9 @@ export default class Hero {
   }
 
   draw(ctx) {
-    const x = this.x - this._offsetX;
-    const y = this.y - this._offsetY;
-    const { facingDirection } = this;
-    this.renderer.draw({ ctx, facingDirection, x, y });
+    const x = this.getLeft();
+    const y = this.getTop();
+    this.renderer.draw({ ctx, facingDirection: this.facingDirection, x, y });
   }
 
   getTop() {

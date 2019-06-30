@@ -8,8 +8,6 @@ let renderer;
 beforeEach(() => {
   canvas = document.createElement('canvas');
   renderer = new Renderer();
-  renderer.loadImage = jest.fn();
-  renderer.draw = jest.fn();
   canvas.height = 800;
   canvas.width = 1000;
   hero = new Hero({ canvas, renderer });
@@ -18,6 +16,7 @@ beforeEach(() => {
 afterEach(jest.clearAllMocks);
 
 it('loads image on init', () => {
+  renderer.loadImage = jest.fn();
   hero.init();
   const src = HERO_IMAGE_SRC;
   const tileW = TILE_SIZE;
@@ -25,10 +24,17 @@ it('loads image on init', () => {
   expect(renderer.loadImage).toBeCalledWith({ src, tileW, tileH });
 });
 
-it('draws hero', () => {
-  const options = { ctx: {}, facingDirection: 1, x: hero.getLeft(), y: hero.getTop() };
-  hero.draw({});
+it('hero.draw calls renderer.draw', () => {
+  renderer.draw = jest.fn();
+  const ctx = {};
+  const options = { ctx, facingDirection: 1, x: hero.getLeft(), y: hero.getTop() };
+  hero.draw(ctx);
   expect(renderer.draw).toBeCalledWith(options);
+});
+
+it('gives renderer width/height', () => {
+  expect(renderer.width).toBeGreaterThan(0);
+  expect(renderer.height).toBeGreaterThan(0);
 });
 
 it('creates canvas if none provided', () => {
