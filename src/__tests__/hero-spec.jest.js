@@ -1,85 +1,40 @@
-import Hero, { MAX_VX, TILE_SIZE, HERO_IMAGE_SRC } from '../hero';
+import Hero, { MAX_VX, HERO_IMAGE_SRC } from '../hero';
+import Renderer, { TILE_SIZE } from '../renderer';
 
 let hero;
 let canvas;
+let renderer;
 
 beforeEach(() => {
   canvas = document.createElement('canvas');
+  renderer = new Renderer();
   canvas.height = 800;
   canvas.width = 1000;
-  hero = new Hero({ canvas });
+  hero = new Hero({ canvas, renderer });
 });
 
-it('loads image on init', done => {
-  const mockImage = { onload: jest.fn() };
-  expect(hero.image).toBe(null);
-  hero.init(mockImage).then(() => {
-    expect(hero.image).toBeTruthy();
-    done();
-  });
-  // trigger onload to get into .then
-  mockImage.onload();
-});
+afterEach(jest.clearAllMocks);
 
-it('init loads image with none provided', () => {
-  hero.loadImage = jest.fn();
+it('loads image on init', () => {
+  renderer.loadImage = jest.fn();
   hero.init();
-  expect(hero.loadImage).toBeCalled();
+  const src = HERO_IMAGE_SRC;
+  const tileW = TILE_SIZE;
+  const tileH = TILE_SIZE;
+  expect(renderer.loadImage).toBeCalledWith({ src, tileW, tileH });
 });
 
-it('loadImage if none provided', () => {
-  hero.loadImage();
-  const imgFilename = hero.image.src.slice(hero.image.src.lastIndexOf('/'));
-  const srcFilename = HERO_IMAGE_SRC.slice(HERO_IMAGE_SRC.lastIndexOf('/'));
-  expect(imgFilename).toBe(srcFilename);
+it('hero.draw calls renderer.draw', () => {
+  renderer.draw = jest.fn();
+  const ctx = {};
+  const options = { ctx, lookAt: 1, x: hero.getLeft(), y: hero.getTop() };
+  hero.draw(ctx);
+  expect(renderer.draw).toBeCalledWith(options);
 });
 
-it('draws hero', done => {
-  const mockCtx = { drawImage: jest.fn() };
-  const mockImage = { onload: jest.fn().mockResolvedValue() };
-  const x = 0;
-  const y = 0;
-  hero.place({ x, y });
-
-  const drawImageArgs = [
-    mockImage,
-    x,
-    y,
-    TILE_SIZE,
-    TILE_SIZE,
-    x - hero.width / 2,
-    y - hero.height,
-    hero.width,
-    hero.height,
-  ];
-
-  hero.loadImage(mockImage).then(() => {
-    expect(mockImage.src).toBe(HERO_IMAGE_SRC);
-    hero.draw(mockCtx);
-    expect(mockCtx.drawImage).toBeCalledWith(...drawImageArgs);
-    hero.moveRight();
-    hero.draw(mockCtx);
-    // Should offset to 2nd sprite
-    const drawImageFlippedArgs = drawImageArgs.map((arg, i) => (i === 1 ? TILE_SIZE : arg));
-    expect(mockCtx.drawImage).toBeCalledWith(...drawImageFlippedArgs);
-    done();
-  });
-  // trigger onload to get into .then
-  mockImage.onload();
-});
-
-// it('draws square hero', () => {
-//   const mockCtx = { fillStyle: '', fillRect: jest.fn() };
-//   hero.draw(mockCtx);
-//   expect(mockCtx.fillStyle).toBe('white');
-//   expect(mockCtx.fillRect).toBeCalledTimes(1);
-// });
-
-it('uses color if provided', () => {
-  const hero2 = new Hero({ color: 'limegreen' });
-  const mockCtx = { fillStyle: '', fillRect: jest.fn() };
-  hero2.draw(mockCtx);
-  expect(mockCtx.fillStyle).toBe('limegreen');
+it('gives renderer width/height', () => {
+  expect(renderer.width).toBeGreaterThan(0);
+  expect(renderer.height).toBeGreaterThan(0);
 });
 
 it('creates canvas if none provided', () => {
@@ -121,7 +76,7 @@ describe('movement', () => {
     const initialX = hero.x;
     hero.moveLeft();
     hero.update();
-    expect(hero.facingDirection).toBe(-1);
+    expect(hero.getDirection()).toBe(-1);
     expect(hero.x).toBeLessThan(initialX);
   });
 
@@ -129,7 +84,7 @@ describe('movement', () => {
     const initialX = hero.x;
     hero.moveRight();
     hero.update();
-    expect(hero.facingDirection).toBe(1);
+    expect(hero.getDirection()).toBe(1);
     expect(hero.x).toBeGreaterThan(initialX);
   });
 
@@ -138,6 +93,7 @@ describe('movement', () => {
     hero.update();
     expect(hero.vx).toBeLessThan(0);
     hero.stopX();
+    hero.update();
     expect(hero.vx).toBe(0);
   });
 
@@ -146,6 +102,7 @@ describe('movement', () => {
     hero.update();
     expect(hero.vx).toBeGreaterThan(0);
     hero.stopX();
+    hero.update();
     expect(hero.vx).toBe(0);
   });
 

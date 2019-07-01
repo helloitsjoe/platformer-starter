@@ -1,23 +1,36 @@
+import Renderer, { TILE_SIZE } from './renderer';
+
 export const GRAVITY = 0.7;
 export const VELOCITY = 5;
 export const MAX_VX = 5;
 export const MAX_VY = VELOCITY * 3;
+export const HERO_SIZE = 40;
 export const HERO_IMAGE_SRC = './assets/skull.png';
-export const TILE_SIZE = 128;
 
 export default class Hero {
-  constructor({ canvas, x, y, color = 'white', grounded = true, accelX = 0.75 } = {}) {
+  constructor({
+    canvas,
+    x,
+    y,
+    color = 'white',
+    grounded = true,
+    accelX = 0.75,
+    renderer = new Renderer(),
+  } = {}) {
     this.canvas = canvas || document.createElement('canvas');
     this.x = x || this.canvas.width / 2;
     this.y = y || this.canvas.height;
 
-    this.image = null;
-
     this.vx = 0;
     this.vy = 0;
-    this.width = 60;
-    this.height = 60;
-    this._direction = 0;
+    this.width = HERO_SIZE;
+    this.height = HERO_SIZE;
+
+    this.renderer = renderer;
+    this.renderer.setWidth(this.width);
+    this.renderer.setHeight(this.height);
+
+    this._direction = 1;
     this._color = color;
     this._accelX = accelX;
     this._grounded = grounded;
@@ -33,8 +46,12 @@ export default class Hero {
     this.loadImage = this.loadImage.bind(this);
   }
 
-  init(image = new Image()) {
-    return this.loadImage(image);
+  init() {
+    return this.renderer.loadImage({ src: HERO_IMAGE_SRC, tileH: TILE_SIZE, tileW: TILE_SIZE });
+  }
+
+  getDirection() {
+    return this._direction;
   }
 
   jump() {
@@ -52,17 +69,17 @@ export default class Hero {
 
   moveLeft() {
     this._direction = -1;
-    this.facingDirection = this._direction;
+    this._moving = true;
   }
 
   moveRight() {
     this._direction = 1;
-    this.facingDirection = this._direction;
+    this._moving = true;
   }
 
   stopX() {
-    this._direction = 0;
     this.vx = 0;
+    this._moving = false;
   }
 
   place({ x = this.x, y = this.y } = {}) {
@@ -71,6 +88,13 @@ export default class Hero {
   }
 
   getVX() {
+    // Using this._moving to stop motion, in order to use only 1 or -1
+    // for this._direction. We could also include 0 for this._direction,
+    // but then we need a separate `lookAt` value to determine which
+    // way the sprite is facing. Not sure which way is better, but this way
+    // seems better than keeping 2 similar-but-different values in sync.
+    if (!this._moving) return 0;
+
     this.vx += this._accelX * this._direction;
     if (Math.abs(this.vx) > MAX_VX) {
       this.vx = MAX_VX * this._direction;
@@ -93,49 +117,11 @@ export default class Hero {
     this._checkCollisions(platforms);
   }
 
-  loadImage(image = new Image()) {
-    this.image = image;
-    this.image.src = HERO_IMAGE_SRC;
-    return new Promise(resolve => {
-      this.image.onload = () => resolve();
-    });
-  }
-
   draw(ctx) {
-    ctx.fillStyle = this._color;
-    this.drawImage(ctx);
+    const x = this.getLeft();
+    const y = this.getTop();
+    this.renderer.draw({ ctx, lookAt: this._direction, x, y });
   }
-
-  drawImage(ctx) {
-    if (!this.image) return;
-
-    ctx.drawImage(
-      this.image,
-      this.facingDirection > 0 ? TILE_SIZE : 0,
-      0,
-      TILE_SIZE,
-      TILE_SIZE,
-      this.x - this._offsetX,
-      this.y - this._offsetY,
-      this.width,
-      this.height
-    );
-  }
-
-  // drawSquare(ctx) {
-  //   ctx.fillRect(
-  //     this.x - this._offsetX,
-  //     this.y - this._offsetY,
-  //     this.width,
-  //     this.height
-  //   );
-  // }
-
-  // drawCircle(ctx) {
-  //   ctx.beginPath();
-  //   ctx.arc(this.x, this.y - this._offsetY / 2, this._offsetX, 0, Math.PI * 2);
-  //   ctx.fill();
-  // }
 
   getTop() {
     return this.y - this._offsetY;
