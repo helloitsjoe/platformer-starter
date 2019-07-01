@@ -27,7 +27,7 @@ it('loads image on init', () => {
 it('hero.draw calls renderer.draw', () => {
   renderer.draw = jest.fn();
   const ctx = {};
-  const options = { ctx, facingDirection: 1, x: hero.getLeft(), y: hero.getTop() };
+  const options = { ctx, lookAt: 1, x: hero.getLeft(), y: hero.getTop() };
   hero.draw(ctx);
   expect(renderer.draw).toBeCalledWith(options);
 });
@@ -76,7 +76,7 @@ describe('movement', () => {
     const initialX = hero.x;
     hero.moveLeft();
     hero.update();
-    expect(hero.facingDirection).toBe(-1);
+    expect(hero.getDirection()).toBe(-1);
     expect(hero.x).toBeLessThan(initialX);
   });
 
@@ -84,7 +84,7 @@ describe('movement', () => {
     const initialX = hero.x;
     hero.moveRight();
     hero.update();
-    expect(hero.facingDirection).toBe(1);
+    expect(hero.getDirection()).toBe(1);
     expect(hero.x).toBeGreaterThan(initialX);
   });
 
@@ -93,6 +93,7 @@ describe('movement', () => {
     hero.update();
     expect(hero.vx).toBeLessThan(0);
     hero.stopX();
+    hero.update();
     expect(hero.vx).toBe(0);
   });
 
@@ -101,6 +102,7 @@ describe('movement', () => {
     hero.update();
     expect(hero.vx).toBeGreaterThan(0);
     hero.stopX();
+    hero.update();
     expect(hero.vx).toBe(0);
   });
 
