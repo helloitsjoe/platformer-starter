@@ -1,5 +1,7 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-unused-vars */
 import Hero from './hero';
-import Platform, { makeRandomPlatform, createPlatforms } from './platform';
+import { createPlatforms } from './platform';
 import Background from './background';
 import Keyboard from './keyboard';
 import Socket from './socket';
@@ -7,13 +9,13 @@ import Socket from './socket';
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
+function fillScreen(canv) {
+  canv.width = window.innerWidth;
+  canv.height = window.innerHeight;
+}
+
 fillScreen(canvas);
 window.addEventListener('resize', () => fillScreen(canvas));
-
-function fillScreen(canvas) {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
 
 const bg = new Background({ canvas });
 const hero = new Hero({ canvas });

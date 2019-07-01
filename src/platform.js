@@ -3,12 +3,7 @@ export const DEFAULT_PLATFORM_WIDTH = 200;
 export const DEFAULT_PLATFORMS = 5;
 
 export default class Platform {
-  constructor({
-    x,
-    y,
-    width = DEFAULT_PLATFORM_WIDTH,
-    height = DEFAULT_PLATFORM_HEIGHT,
-  } = {}) {
+  constructor({ x, y, width = DEFAULT_PLATFORM_WIDTH, height = DEFAULT_PLATFORM_HEIGHT } = {}) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -45,20 +40,18 @@ export default class Platform {
 export const makeRandomPlatform = ({
   maxX,
   maxY,
-  minX = 0,
-  minY = 0,
+  // minX = 0,
+  // minY = 0,
   width = DEFAULT_PLATFORM_WIDTH,
   height = DEFAULT_PLATFORM_HEIGHT,
-}) => {
-  return new Platform({
-    // x: Math.floor(Math.random() * (maxX - minX) + minX - width * 2),
-    // y: Math.floor(Math.random() * (maxY - minY) + minY - height * 2),
-    x: Math.floor(Math.random() * (maxX - width)),
-    y: Math.floor(Math.random() * (maxY - height)),
-    width,
-    height,
-  });
-};
+}) => new Platform({
+  // x: Math.floor(Math.random() * (maxX - minX) + minX - width * 2),
+  // y: Math.floor(Math.random() * (maxY - minY) + minY - height * 2),
+  x: Math.floor(Math.random() * (maxX - width)),
+  y: Math.floor(Math.random() * (maxY - height)),
+  width,
+  height,
+});
 
 export const createPlatforms = ({
   canvas = document.createElement('canvas'),
