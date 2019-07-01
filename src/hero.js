@@ -43,7 +43,6 @@ export default class Hero {
     this.moveLeft = this.moveLeft.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.cancelJump = this.cancelJump.bind(this);
-    this.loadImage = this.loadImage.bind(this);
   }
 
   init() {

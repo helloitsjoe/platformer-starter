@@ -75,7 +75,7 @@ describe('keyboard', () => {
   });
 });
 
-xdescribe('socket', () => {
+describe('socket', () => {
   const PORT = 1234;
   let server;
   let sender;
