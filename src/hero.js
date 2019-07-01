@@ -29,9 +29,8 @@ export default class Hero {
     this.renderer = renderer;
     this.renderer.setWidth(this.width);
     this.renderer.setHeight(this.height);
-    this.facingDirection = 1;
 
-    this._direction = 0;
+    this._direction = 1;
     this._color = color;
     this._accelX = accelX;
     this._grounded = grounded;
@@ -50,6 +49,10 @@ export default class Hero {
     return this.renderer.loadImage({ src: HERO_IMAGE_SRC, tileH: TILE_SIZE, tileW: TILE_SIZE });
   }
 
+  getDirection() {
+    return this._direction;
+  }
+
   jump() {
     if (this._grounded) {
       this.vy = -MAX_VY;
@@ -65,17 +68,17 @@ export default class Hero {
 
   moveLeft() {
     this._direction = -1;
-    this.facingDirection = this._direction;
+    this._moving = true;
   }
 
   moveRight() {
     this._direction = 1;
-    this.facingDirection = this._direction;
+    this._moving = true;
   }
 
   stopX() {
-    this._direction = 0;
     this.vx = 0;
+    this._moving = false;
   }
 
   place({ x = this.x, y = this.y } = {}) {
@@ -84,6 +87,13 @@ export default class Hero {
   }
 
   getVX() {
+    // Using this._moving to stop motion, in order to use only 1 or -1
+    // for this._direction. We could also include 0 for this._direction,
+    // but then we need a separate `lookAt` value to determine which
+    // way the sprite is facing. Not sure which way is better, but this way
+    // seems better than keeping 2 similar-but-different values in sync.
+    if (!this._moving) return 0;
+
     this.vx += this._accelX * this._direction;
     if (Math.abs(this.vx) > MAX_VX) {
       this.vx = MAX_VX * this._direction;
@@ -109,7 +119,7 @@ export default class Hero {
   draw(ctx) {
     const x = this.getLeft();
     const y = this.getTop();
-    this.renderer.draw({ ctx, facingDirection: this.facingDirection, x, y });
+    this.renderer.draw({ ctx, lookAt: this._direction, x, y });
   }
 
   getTop() {

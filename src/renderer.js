@@ -1,5 +1,12 @@
 export const TILE_SIZE = 128;
 
+export function getAlpha(tick, speedFactor) {
+  if (tick < speedFactor * 0.25) return 0.25;
+  if (tick < speedFactor * 0.5) return 0.5;
+  if (tick < speedFactor * 0.75) return 0.75;
+  return 1;
+}
+
 export default class Renderer {
   constructor({ color = 'white', width, height } = {}) {
     this._color = color;
@@ -8,6 +15,20 @@ export default class Renderer {
     this.tileW = null;
     this.tileH = null;
     this.tick = 0;
+  }
+
+  getDrawImageParams({ sourceX, sourceY, x, y }) {
+    return [
+      this.image,
+      sourceX * this.tileW,
+      sourceY * this.tileH,
+      this.tileW,
+      this.tileH,
+      x,
+      y,
+      this.width,
+      this.height,
+    ];
   }
 
   setWidth(width) {
@@ -32,47 +53,36 @@ export default class Renderer {
     });
   }
 
-  // TODO: Maybe replace facingDirection with vx/vy
-  draw({ ctx, facingDirection, x, y }) {
+  // TODO: Maybe replace lookAt with vx/vy
+  draw({ ctx, lookAt, x, y }) {
     this.tick++;
-    this.drawImage({ ctx, facingDirection, x, y });
+    this.drawImage({ ctx, lookAt, x, y });
   }
 
-  drawImage({ ctx, facingDirection = 1, x, y }) {
+  drawImage({ ctx, lookAt, x, y }) {
     if (!this.image) return;
-    // Skull
-    const skullSourceX = facingDirection > 0 ? 1 : 0;
-    const skullSourceY = 0;
-    ctx.drawImage(
-      this.image,
-      skullSourceX * this.tileW,
-      skullSourceY * this.tileH,
-      this.tileW,
-      this.tileH,
-      x,
-      y,
-      this.width,
-      this.height
-    );
 
-    // Eyes
-    // ctx.save();
-    // ctx.globalAlpha = getAlpha(this.tick % 16);
-    // console.log(`ctx.globalAlpha:`, ctx.globalAlpha);
-    // const eyesSourceX = facingDirection > 0 ? 1 : 0;
-    // const eyesSourceY = 1;
-    // ctx.drawImage(
-    //   this.image,
-    //   eyesSourceX * this.tileW,
-    //   eyesSourceY * this.tileH,
-    //   this.tileW,
-    //   this.tileH,
-    //   x,
-    //   y,
-    //   this.width,
-    //   this.height
-    // );
-    // ctx.restore();
+    this.drawSkull({ ctx, lookAt, x, y });
+    this.drawEyes({ ctx, lookAt, x, y });
+  }
+
+  drawSkull({ ctx, lookAt, x, y }) {
+    const sourceX = lookAt > 0 ? 1 : 0;
+    const sourceY = 0;
+
+    ctx.drawImage(...this.getDrawImageParams({ sourceX, sourceY, x, y }));
+  }
+
+  drawEyes({ ctx, lookAt, x, y }) {
+    const ANIM_FACTOR = 32;
+    ctx.save();
+    ctx.globalAlpha = getAlpha(this.tick % ANIM_FACTOR, ANIM_FACTOR);
+
+    const sourceX = lookAt > 0 ? 1 : 0;
+    const sourceY = 1;
+
+    ctx.drawImage(...this.getDrawImageParams({ sourceX, sourceY, x, y }));
+    ctx.restore();
   }
 
   drawSquare(ctx, x, y) {

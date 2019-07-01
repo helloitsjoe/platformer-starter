@@ -1,9 +1,11 @@
-import Renderer, { TILE_SIZE } from '../renderer';
+import Renderer, { getAlpha, TILE_SIZE } from '../renderer';
 
 const mockCtx = {
   fillStyle: '',
   arc: jest.fn(),
   fill: jest.fn(),
+  save: jest.fn(),
+  restore: jest.fn(),
   fillRect: jest.fn(),
   drawImage: jest.fn(),
   beginPath: jest.fn(),
@@ -62,12 +64,12 @@ describe('Renderer', () => {
 
       renderer.loadImage({ src: 'fake-src.png', image: mockImage, tileW, tileH });
 
-      renderer.drawImage({ ctx: mockCtx, facingDirection: -1, x, y });
+      renderer.drawImage({ ctx: mockCtx, lookAt: -1, x, y });
       expect(mockCtx.drawImage).toBeCalledWith(...drawImageArgs);
 
       // Should offset to 2nd sprite
       const drawImageFlippedArgs = drawImageArgs.map((arg, i) => (i === 1 ? TILE_SIZE : arg));
-      renderer.drawImage({ ctx: mockCtx, facingDirection: 1, x, y });
+      renderer.drawImage({ ctx: mockCtx, lookAt: 1, x, y });
       expect(mockCtx.drawImage).toBeCalledWith(...drawImageFlippedArgs);
     });
 
@@ -75,6 +77,16 @@ describe('Renderer', () => {
       const renderer = new Renderer();
       renderer.drawImage({ ctx: {} });
       expect(mockCtx.drawImage).not.toBeCalled();
+    });
+
+    it('drawImage calls drawSkull/drawEyes', () => {
+      const renderer = new Renderer();
+      renderer.loadImage({ src: 'fake-src.png', image: {} });
+      renderer.drawSkull = jest.fn();
+      renderer.drawEyes = jest.fn();
+      renderer.drawImage({ ctx: {} });
+      expect(renderer.drawSkull).toBeCalled();
+      expect(renderer.drawEyes).toBeCalled();
     });
   });
 
@@ -107,4 +119,17 @@ describe('Renderer', () => {
       expect(mockCtx.fillStyle).toBe('limegreen');
     });
   });
+});
+
+describe('getAlpha', () => {
+  it.each`
+    tick | alpha
+    ${1} | ${0.5}
+    ${2} | ${0.75}
+    ${3} | ${1}
+    ${4} | ${0.25}
+  `('tick $tick is $alpha', ({ tick, alpha }) => {
+  const ANIM_FACTOR = 4;
+  expect(getAlpha(tick % ANIM_FACTOR, ANIM_FACTOR)).toBe(alpha);
+});
 });
