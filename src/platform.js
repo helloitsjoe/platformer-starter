@@ -71,16 +71,9 @@ export const createPlatforms = ({
     height: 100,
   });
 
-  const randoms = new Array(num).fill(null).map((plat, i, arr) => {
-    const prev = arr[i - 1] || ground;
-    return makeRandomPlatform({
-      maxX: canvas.width,
-      maxY: canvas.height - DEFAULT_PLATFORM_HEIGHT * 2,
-      // maxX: prev.getLeft(),
-      // maxY: prev.getTop(),
-      // minX,
-      // minY
-    });
-  });
+  const randoms = new Array(num).fill(null).map(plat => makeRandomPlatform({
+    maxX: canvas.width,
+    maxY: canvas.height - DEFAULT_PLATFORM_HEIGHT * 2,
+  }));
   return [ground, testPlatform, ...randoms];
 };
