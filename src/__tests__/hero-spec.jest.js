@@ -1,4 +1,4 @@
-import Hero, { MAX_VX, HERO_IMAGE_SRC } from '../hero';
+import Hero, { getAlpha, MAX_VX, HERO_IMAGE_SRC } from '../hero';
 import Renderer, { TILE_SIZE } from '../renderer';
 
 let hero;
@@ -24,12 +24,20 @@ it('loads image on init', () => {
   expect(renderer.loadImage).toBeCalledWith({ src, tileW, tileH });
 });
 
-it('hero.draw calls renderer.draw', () => {
-  renderer.draw = jest.fn();
-  const ctx = {};
-  const options = { ctx, lookAt: 1, x: hero.getLeft(), y: hero.getTop() };
+it('hero.draw calls ctx.drawImage', () => {
+  hero.init();
+  const drawImage = jest.fn();
+  const ctx = { save: jest.fn(), restore: jest.fn(), drawImage };
   hero.draw(ctx);
-  expect(renderer.draw).toBeCalledWith(options);
+  expect(ctx.drawImage).toBeCalledTimes(2);
+});
+
+it('drawImage calls drawSkull/drawEyes', () => {
+  hero.drawSkull = jest.fn();
+  hero.drawEyes = jest.fn();
+  hero.draw();
+  expect(hero.drawSkull).toBeCalled();
+  expect(hero.drawEyes).toBeCalled();
 });
 
 it('gives renderer width/height', () => {
@@ -40,6 +48,19 @@ it('gives renderer width/height', () => {
 it('creates canvas if none provided', () => {
   const hero2 = new Hero();
   expect(hero2.canvas).toBeInstanceOf(HTMLCanvasElement);
+});
+
+describe('getAlpha', () => {
+  it.each`
+    tick | alpha
+    ${1} | ${0.5}
+    ${2} | ${0.75}
+    ${3} | ${1}
+    ${4} | ${0.25}
+  `('tick $tick is $alpha', ({ tick, alpha }) => {
+  const ANIM_FACTOR = 4;
+  expect(getAlpha(tick % ANIM_FACTOR, ANIM_FACTOR)).toBe(alpha);
+});
 });
 
 describe('movement', () => {

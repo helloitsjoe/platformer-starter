@@ -1,18 +1,27 @@
+import Renderer from './renderer';
+
 export const DEFAULT_PLATFORM_HEIGHT = 30;
 export const DEFAULT_PLATFORM_WIDTH = 200;
 export const DEFAULT_PLATFORMS = 5;
 
 export default class Platform {
-  constructor({ x, y, width = DEFAULT_PLATFORM_WIDTH, height = DEFAULT_PLATFORM_HEIGHT } = {}) {
+  constructor({
+    x,
+    y,
+    width = DEFAULT_PLATFORM_WIDTH,
+    height = DEFAULT_PLATFORM_HEIGHT,
+    renderer = new Renderer(),
+  } = {}) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    this.renderer = renderer;
   }
 
   draw(ctx) {
-    ctx.fillStyle = 'red';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    const { x, y, width, height } = this;
+    this.renderer.drawRect({ ctx, color: 'red', x, y, width, height });
   }
 
   getTop() {

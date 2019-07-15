@@ -1,4 +1,4 @@
-import Renderer, { getAlpha, TILE_SIZE } from '../renderer';
+import Renderer, { TILE_SIZE } from '../renderer';
 
 const mockCtx = {
   fillStyle: '',
@@ -24,18 +24,6 @@ describe('Renderer', () => {
     expect(renderer.height).toBe(4);
   });
 
-  it('draws image by default', () => {
-    const renderer = new Renderer();
-    renderer.loadImage({ src: 'fake' });
-    renderer.drawImage = jest.fn();
-    renderer.drawSquare = jest.fn();
-    renderer.drawCircle = jest.fn();
-    renderer.draw(mockCtx);
-    expect(renderer.drawImage).toBeCalledTimes(1);
-    expect(renderer.drawSquare).toBeCalledTimes(0);
-    expect(renderer.drawCircle).toBeCalledTimes(0);
-  });
-
   it('loadImage loads image with src', () => {
     const renderer = new Renderer();
     expect(renderer.image).toBe(undefined);
@@ -50,8 +38,8 @@ describe('Renderer', () => {
   describe('drawImage()', () => {
     it('drawImage calls context.drawImage', () => {
       const mockImage = { onload: jest.fn() };
-      const sourceX = 0;
-      const sourceY = 0;
+      const srcX = 0;
+      const srcY = 0;
       const tileW = TILE_SIZE;
       const tileH = TILE_SIZE;
       const x = 0;
@@ -60,17 +48,12 @@ describe('Renderer', () => {
       const height = 40;
       const renderer = new Renderer({ width, height });
 
-      const drawImageArgs = [mockImage, sourceX, sourceY, tileW, tileH, x, y, width, height];
+      const drawImageArgs = [mockImage, srcX, srcY, tileW, tileH, x, y, width, height];
 
       renderer.loadImage({ src: 'fake-src.png', image: mockImage, tileW, tileH });
 
-      renderer.drawImage({ ctx: mockCtx, lookAt: -1, x, y });
+      renderer.drawImage({ ctx: mockCtx, srcX, srcY, x, y });
       expect(mockCtx.drawImage).toBeCalledWith(...drawImageArgs);
-
-      // Should offset to 2nd sprite
-      const drawImageFlippedArgs = drawImageArgs.map((arg, i) => (i === 1 ? TILE_SIZE : arg));
-      renderer.drawImage({ ctx: mockCtx, lookAt: 1, x, y });
-      expect(mockCtx.drawImage).toBeCalledWith(...drawImageFlippedArgs);
     });
 
     it('drawImage does not call ctx.drawImage if !renderer.image', () => {
@@ -78,58 +61,32 @@ describe('Renderer', () => {
       renderer.drawImage({ ctx: {} });
       expect(mockCtx.drawImage).not.toBeCalled();
     });
-
-    it('drawImage calls drawSkull/drawEyes', () => {
-      const renderer = new Renderer();
-      renderer.loadImage({ src: 'fake-src.png', image: {} });
-      renderer.drawSkull = jest.fn();
-      renderer.drawEyes = jest.fn();
-      renderer.drawImage({ ctx: {} });
-      expect(renderer.drawSkull).toBeCalled();
-      expect(renderer.drawEyes).toBeCalled();
-    });
   });
 
-  describe('drawSquare', () => {
-    it('draws square', () => {
+  describe('drawRect', () => {
+    it('draws rectangle', () => {
       const renderer = new Renderer();
-      renderer.drawSquare(mockCtx);
-      expect(mockCtx.fillStyle).toBe('white');
-      expect(mockCtx.fillRect).toBeCalledTimes(1);
-    });
+      const x = 1;
+      const y = 2;
+      const width = 20;
+      const height = 30;
 
-    it('uses color if provided', () => {
-      const renderer = new Renderer({ color: 'limegreen' });
-      renderer.drawSquare(mockCtx);
-      expect(mockCtx.fillStyle).toBe('limegreen');
+      renderer.drawRect({ ctx: mockCtx, color: 'white', x, y, width, height });
+      expect(mockCtx.fillStyle).toBe('white');
+      expect(mockCtx.fillRect).toBeCalledWith(x, y, width, height);
     });
   });
 
   describe('drawCircle', () => {
     it('draws circle', () => {
       const renderer = new Renderer();
-      renderer.drawCircle(mockCtx);
-      expect(mockCtx.fillStyle).toBe('white');
-      expect(mockCtx.arc).toBeCalledTimes(1);
-    });
+      const x = 0;
+      const y = 1;
+      const radius = 2;
 
-    it('uses color if provided', () => {
-      const renderer = new Renderer({ color: 'limegreen' });
-      renderer.drawCircle(mockCtx);
-      expect(mockCtx.fillStyle).toBe('limegreen');
+      renderer.drawCircle({ ctx: mockCtx, color: 'red', x, y, radius });
+      expect(mockCtx.fillStyle).toBe('red');
+      expect(mockCtx.arc).toBeCalledWith(x, y, radius, 0, Math.PI * 2);
     });
   });
-});
-
-describe('getAlpha', () => {
-  it.each`
-    tick | alpha
-    ${1} | ${0.5}
-    ${2} | ${0.75}
-    ${3} | ${1}
-    ${4} | ${0.25}
-  `('tick $tick is $alpha', ({ tick, alpha }) => {
-  const ANIM_FACTOR = 4;
-  expect(getAlpha(tick % ANIM_FACTOR, ANIM_FACTOR)).toBe(alpha);
-});
 });

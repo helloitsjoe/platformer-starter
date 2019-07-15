@@ -7,6 +7,13 @@ export const MAX_VY = VELOCITY * 3;
 export const HERO_SIZE = 40;
 export const HERO_IMAGE_SRC = './assets/skull.png';
 
+export function getAlpha(tick, speedFactor) {
+  if (tick < speedFactor * 0.25) return 0.25;
+  if (tick < speedFactor * 0.5) return 0.5;
+  if (tick < speedFactor * 0.75) return 0.75;
+  return 1;
+}
+
 export default class Hero {
   constructor({
     canvas,
@@ -117,9 +124,32 @@ export default class Hero {
   }
 
   draw(ctx) {
+    this.drawSkull({ ctx });
+    this.drawEyes({ ctx });
+  }
+
+  drawSkull({ ctx }) {
     const x = this.getLeft();
     const y = this.getTop();
-    this.renderer.draw({ ctx, lookAt: this._direction, x, y });
+
+    const srcX = this._getSrcX();
+    const srcY = 0;
+
+    this.renderer.drawImage({ ctx, srcX, srcY, x, y });
+  }
+
+  drawEyes({ ctx }) {
+    const x = this.getLeft();
+    const y = this.getTop();
+
+    const ANIM_FACTOR = 32;
+    ctx.save();
+    ctx.globalAlpha = getAlpha(this.renderer.tick % ANIM_FACTOR, ANIM_FACTOR);
+
+    const srcX = this._getSrcX();
+    const srcY = 1;
+    this.renderer.drawImage({ ctx, srcX, srcY, x, y });
+    ctx.restore();
   }
 
   getTop() {
@@ -136,6 +166,10 @@ export default class Hero {
 
   getRight() {
     return this.x + this._offsetX;
+  }
+
+  _getSrcX() {
+    return this._direction > 0 ? 1 : 0;
   }
 
   _checkCollisions(platforms) {
