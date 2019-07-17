@@ -6,6 +6,7 @@ const app = express();
 const http = require('http').Server(app);
 const ip = require('ip');
 const io = require('socket.io')(http);
+// const getIpAddress = require('./getIpAddress');
 
 const createServer = (port = 3001) => {
   app.use(bodyParser.json());
@@ -38,8 +39,9 @@ const createServer = (port = 3001) => {
 
   http.listen(port, () => {
     // const ipAddress = getIpAddress();
+    const ipAddress = ip.address();
     console.log(`To play, point your browser to http://localhost:${port}`);
-    console.log(`To use your phone as a controller, go to http://${ip.address()}:${port}/player`);
+    console.log(`To use your phone as a controller, go to http://${ipAddress}:${port}/player`);
   });
 
   return http;

@@ -11,7 +11,7 @@ const debug = (...args) => {
   debugPanel.innerHTML = args;
 };
 
-const isIn = (pos, square) => {
+const isIn = (square, pos) => {
   const [x, y, size] = square;
   return pos.x > x && pos.x < x + size && pos.y > y && pos.y < y + size;
 };
@@ -45,33 +45,29 @@ const socket = io();
 socket.on('connected', () => console.log('connected!'));
 
 canvas.addEventListener('touchstart', e => {
-  e.changedTouches.forEach(touch => {
-    const { pageX: x, pageY: y } = touch;
-    if (isIn({ x, y }, leftButton)) {
-      debug('LEFT DOWN');
-      socket.emit('tapDown', 'padLeft');
-    } else if (isIn({ x, y }, rightButton)) {
-      debug('RIGHT DOWN');
-      socket.emit('tapDown', 'padRight');
-    } else if (isIn({ x, y }, jumpButton)) {
-      debug('BUTTON DOWN');
-      socket.emit('tapDown', 'button');
-    }
-  });
+  const { pageX: x, pageY: y } = e.changedTouches[0];
+  if (isIn(leftButton, { x, y })) {
+    debug('LEFT DOWN');
+    socket.emit('tapDown', 'padLeft');
+  } else if (isIn(rightButton, { x, y })) {
+    debug('RIGHT DOWN');
+    socket.emit('tapDown', 'padRight');
+  } else if (isIn(jumpButton, { x, y })) {
+    debug('BUTTON DOWN');
+    socket.emit('tapDown', 'button');
+  }
 });
 
 canvas.addEventListener('touchend', e => {
-  e.changedTouches.forEach(touch => {
-    const { pageX: x, pageY: y } = touch;
-    if (isIn({ x, y }, leftButton)) {
-      debug('LEFT UP');
-      socket.emit('tapUp', 'padLeft');
-    } else if (isIn({ x, y }, rightButton)) {
-      debug('RIGHT UP');
-      socket.emit('tapUp', 'padRight');
-    } else if (isIn({ x, y }, jumpButton)) {
-      debug('BUTTON UP');
-      socket.emit('tapUp', 'button');
-    }
-  });
+  const { pageX: x, pageY: y } = e.changedTouches[0];
+  if (isIn(leftButton, { x, y })) {
+    debug('LEFT UP');
+    socket.emit('tapUp', 'padLeft');
+  } else if (isIn(rightButton, { x, y })) {
+    debug('RIGHT UP');
+    socket.emit('tapUp', 'padRight');
+  } else if (isIn(jumpButton, { x, y })) {
+    debug('BUTTON UP');
+    socket.emit('tapUp', 'button');
+  }
 });
