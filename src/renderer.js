@@ -1,4 +1,12 @@
 export const TILE_SIZE = 128;
+const ANIM_FACTOR = 32;
+
+export function getAlpha(tick, speedFactor) {
+  if (tick < speedFactor * 0.25) return 0.25;
+  if (tick < speedFactor * 0.5) return 0.5;
+  if (tick < speedFactor * 0.75) return 0.75;
+  return 1;
+}
 
 export default class Renderer {
   constructor({ width, height } = {}) {
@@ -43,6 +51,15 @@ export default class Renderer {
       this.tileW = tileW;
       this.tileH = tileH;
     });
+  }
+
+  preDrawAlpha(ctx) {
+    ctx.save();
+    ctx.globalAlpha = getAlpha(this.tick % ANIM_FACTOR, ANIM_FACTOR);
+  }
+
+  postDrawAlpha(ctx) {
+    ctx.restore();
   }
 
   drawImage({ ctx, srcX, srcY, x, y }) {

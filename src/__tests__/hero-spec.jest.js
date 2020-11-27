@@ -1,4 +1,4 @@
-import Hero, { getAlpha, MAX_VX, HERO_IMAGE_SRC } from '../hero';
+import Hero, { MAX_VX, HERO_IMAGE_SRC } from '../hero';
 import Renderer, { TILE_SIZE } from '../renderer';
 
 let hero;
@@ -48,19 +48,6 @@ it('gives renderer width/height', () => {
 it('creates canvas if none provided', () => {
   const hero2 = new Hero();
   expect(hero2.canvas).toBeInstanceOf(HTMLCanvasElement);
-});
-
-describe('getAlpha', () => {
-  it.each`
-    tick | alpha
-    ${1} | ${0.5}
-    ${2} | ${0.75}
-    ${3} | ${1}
-    ${4} | ${0.25}
-  `('tick $tick is $alpha', ({ tick, alpha }) => {
-  const ANIM_FACTOR = 4;
-  expect(getAlpha(tick % ANIM_FACTOR, ANIM_FACTOR)).toBe(alpha);
-});
 });
 
 describe('movement', () => {
@@ -186,5 +173,27 @@ describe('movement', () => {
     const vMax = hero.vy;
     hero.update();
     expect(hero.vy).toBe(vMax);
+  });
+
+  describe('drawing flips left/right', () => {
+    it('moving left draws image facing left', () => {
+      renderer.drawImage = jest.fn();
+      const ctx = { save: jest.fn(), restore: jest.fn(), drawImage: jest.fn() };
+      hero.moveLeft();
+      hero.update();
+      hero.draw(ctx);
+      expect(hero.getDirection()).toBe(-1);
+      expect(renderer.drawImage.mock.calls[0][0].srcX).toBe(0);
+    });
+
+    it('moving right draws image facing right', () => {
+      renderer.drawImage = jest.fn();
+      const ctx = { save: jest.fn(), restore: jest.fn(), drawImage: jest.fn() };
+      hero.moveRight();
+      hero.update();
+      hero.draw(ctx);
+      expect(hero.getDirection()).toBe(1);
+      expect(renderer.drawImage.mock.calls[0][0].srcX).toBe(1);
+    });
   });
 });

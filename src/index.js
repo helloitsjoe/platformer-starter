@@ -26,6 +26,7 @@ hero.init().then(() => {
   const socketInput = new Socket(hero, window);
 
   function update(/* deltaTime */) {
+    // TODO: move ctx into renderer?
     bg.draw(ctx);
     hero.update(platforms);
     hero.draw(ctx);

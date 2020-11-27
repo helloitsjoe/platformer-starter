@@ -1,4 +1,4 @@
-import Renderer, { TILE_SIZE } from '../renderer';
+import Renderer, { getAlpha, TILE_SIZE } from '../renderer';
 
 const mockCtx = {
   fillStyle: '',
@@ -87,6 +87,19 @@ describe('Renderer', () => {
       renderer.drawCircle({ ctx: mockCtx, color: 'red', x, y, radius });
       expect(mockCtx.fillStyle).toBe('red');
       expect(mockCtx.arc).toBeCalledWith(x, y, radius, 0, Math.PI * 2);
+    });
+  });
+
+  describe('getAlpha', () => {
+    it.each`
+      tick | alpha
+      ${1} | ${0.5}
+      ${2} | ${0.75}
+      ${3} | ${1}
+      ${4} | ${0.25}
+    `('tick $tick is $alpha', ({ tick, alpha }) => {
+      const ANIM_FACTOR = 4;
+      expect(getAlpha(tick % ANIM_FACTOR, ANIM_FACTOR)).toBe(alpha);
     });
   });
 });

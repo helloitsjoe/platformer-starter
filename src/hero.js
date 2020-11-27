@@ -7,13 +7,6 @@ export const MAX_VY = VELOCITY * 3;
 export const HERO_SIZE = 40;
 export const HERO_IMAGE_SRC = './assets/skull.png';
 
-export function getAlpha(tick, speedFactor) {
-  if (tick < speedFactor * 0.25) return 0.25;
-  if (tick < speedFactor * 0.5) return 0.5;
-  if (tick < speedFactor * 0.75) return 0.75;
-  return 1;
-}
-
 export default class Hero {
   constructor({
     canvas,
@@ -142,14 +135,12 @@ export default class Hero {
     const x = this.getLeft();
     const y = this.getTop();
 
-    const ANIM_FACTOR = 32;
-    ctx.save();
-    ctx.globalAlpha = getAlpha(this.renderer.tick % ANIM_FACTOR, ANIM_FACTOR);
-
     const srcX = this._getSrcX();
     const srcY = 1;
+
+    this.renderer.preDrawAlpha(ctx);
     this.renderer.drawImage({ ctx, srcX, srcY, x, y });
-    ctx.restore();
+    this.renderer.postDrawAlpha(ctx);
   }
 
   getTop() {
